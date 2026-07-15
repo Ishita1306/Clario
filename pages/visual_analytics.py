@@ -38,17 +38,23 @@ def render() -> None:
         label="Visual BI Canvas",
     )
 
-    # Detect suitable columns
+    if st.session_state.get("cleaned_df") is not None:
+        st.info("All insights and metrics are generated from the cleaned dataset.")
+
+    # Detect suitable columns (unsuitable ones are hidden in the service)
     detected = VisualizationService.detect_columns(df)
     numeric_cols = detected["numeric"]
     categorical_cols = detected["categorical"]
     datetime_cols = detected["datetime"]
 
+    from utils.theme_manager import get_current_theme
+    theme_vars = get_current_theme()
+
     # Two column layout: Left Filter Drawer, Right Chart Workspace
     col_filters, col_charts = st.columns([1, 3])
 
     with col_filters:
-        st.markdown('<h4 style="margin-top: 0; font-weight: 700; color: #FAFAFA;">Interactive Filters</h4>', unsafe_allow_html=True)
+        st.markdown(f'<h4 style="margin-top: 0; font-weight: 700; color: var(--text);">Interactive Filters</h4>', unsafe_allow_html=True)
 
         # Wrap filters inside glass card
         with glass_card_panel():
@@ -57,25 +63,25 @@ def render() -> None:
             active_numeric = st.multiselect(
                 "Numeric variables",
                 options=numeric_cols,
-                default=numeric_cols[:1] if numeric_cols else [],
+                default=[],
                 key="act_num"
             )
 
             active_categorical = st.multiselect(
                 "Categorical variables",
                 options=categorical_cols,
-                default=categorical_cols[:1] if categorical_cols else [],
+                default=[],
                 key="act_cat"
             )
 
             active_dates = st.multiselect(
                 "Date variables",
                 options=datetime_cols,
-                default=datetime_cols[:1] if datetime_cols else [],
+                default=[],
                 key="act_date"
             )
 
-            st.markdown('<div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;"></div>', unsafe_allow_html=True)
+            st.markdown('<div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;"></div>', unsafe_allow_html=True)
 
             # 1. Build Filter Inputs and Apply in real-time
             filtered_df = df.copy()
@@ -98,7 +104,7 @@ def render() -> None:
             # B. Apply categorical multi-selects
             for col in active_categorical:
                 options = df[col].dropna().unique().tolist()
-                default_selection = options[:10] if len(options) > 10 else options
+                default_selection = options
                 selected_vals = st.multiselect(
                     f"{col} Values",
                     options=options,
@@ -131,22 +137,52 @@ def render() -> None:
             # Show record counts
             total_rows = len(df)
             filtered_rows = len(filtered_df)
-            import textwrap
             st.markdown(
-                textwrap.dedent(
-                    f"""
-                    <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(34, 211, 238, 0.04); border: 1px solid rgba(34, 211, 238, 0.12); text-align: center;">
-                        <span style="font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em;">Rows Filtered</span>
-                        <p style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--accent);">{filtered_rows:,} / {total_rows:,}</p>
-                    </div>
-                    """
-                ).strip(),
+                f"""
+                <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(99, 102, 241, 0.04); border: 1px solid rgba(99, 102, 241, 0.15); text-align: center;">
+                    <span style="font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em;">Rows Filtered</span>
+                    <p style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--primary);">{filtered_rows:,} / {total_rows:,}</p>
+                </div>
+                """,
                 unsafe_allow_html=True
             )
 
     with col_charts:
-        st.markdown('<h4 style="margin-top: 0; font-weight: 700; color: #FAFAFA;">Visualization Canvas</h4>', unsafe_allow_html=True)
+        st.markdown(f'<h4 style="margin-top: 0; font-weight: 700; color: var(--text);">Visualization Canvas</h4>', unsafe_allow_html=True)
         
+        # Suggest best visualizations automatically
+        recommendations = []
+        if len(numeric_cols) >= 2:
+            try:
+                corr = df[numeric_cols].corr()
+                high_corr = []
+                for i in range(len(numeric_cols)):
+                    for j in range(i + 1, len(numeric_cols)):
+                        c1, c2 = numeric_cols[i], numeric_cols[j]
+                        val = corr.loc[c1, c2]
+                        if abs(val) > 0.65:
+                            high_corr.append((c1, c2, val))
+                if high_corr:
+                    high_corr = sorted(high_corr, key=lambda x: abs(x[2]), reverse=True)
+                    c1, c2, val = high_corr[0]
+                    recommendations.append(f"**Correlation**: `{c1}` and `{c2}` have a high correlation of **{val:.2f}**. Plot them in the **Numeric Relationships** or **Correlation & Heatmaps** tab.")
+            except Exception:
+                pass
+        
+        if datetime_cols and numeric_cols:
+            recommendations.append(f"**Time Series Trend**: Plot `{numeric_cols[0]}` over the `{datetime_cols[0]}` timeline in the **Numeric Relationships** tab.")
+            
+        if categorical_cols:
+            cat_choices = [c for c in categorical_cols if 2 <= df[c].nunique() <= 12]
+            if cat_choices:
+                recommendations.append(f"**Proportions**: Navigate to the **Pie & Proportion Breakdown** tab and view the `{cat_choices[0]}` distribution.")
+
+        if recommendations:
+            with glass_card_panel():
+                st.markdown('<p style="font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-top: 0; margin-bottom: 0.5rem;">Recommended Visualizations</p>', unsafe_allow_html=True)
+                for rec in recommendations:
+                    st.markdown(f'<p style="font-size: 0.8rem; color: var(--text); margin-bottom: 0.25rem;">&bull; {rec}</p>', unsafe_allow_html=True)
+
         # Handle empty filtered dataframe
         if filtered_df.empty:
             st.warning("No data matches current filter settings. Adjust filters to display charts.")
@@ -169,6 +205,7 @@ def render() -> None:
             num_cols = len(filtered_df.select_dtypes(include=[np.number]).columns)
             if num_cols >= 2:
                 fig_heat = VisualizationService.create_correlation_heatmap(filtered_df)
+                fig_heat.update_layout(height=500)
                 st.plotly_chart(fig_heat, use_container_width=True)
             else:
                 st.info("Correlation Matrix requires at least 2 numerical columns.")
@@ -225,6 +262,7 @@ def render() -> None:
                 
                 # Render Histogram
                 fig_hist = VisualizationService.create_histogram(filtered_df, dist_target)
+                fig_hist.update_layout(height=400)
                 st.plotly_chart(fig_hist, use_container_width=True)
                 
                 # Render Box & Violin Plot side-by-side
@@ -232,9 +270,11 @@ def render() -> None:
                 col_box, col_violin = st.columns(2)
                 with col_box:
                     fig_box = VisualizationService.create_box_plot(filtered_df, dist_target, group_col)
+                    fig_box.update_layout(height=400)
                     st.plotly_chart(fig_box, use_container_width=True)
                 with col_violin:
                     fig_violin = VisualizationService.create_violin_plot(filtered_df, dist_target, group_col)
+                    fig_violin.update_layout(height=400)
                     st.plotly_chart(fig_violin, use_container_width=True)
             else:
                 st.info("No numerical features found for distribution plotting.")
@@ -261,15 +301,18 @@ def render() -> None:
                 
                 if x_col and y_col:
                     fig_scatter = VisualizationService.create_scatter_plot(filtered_df, x_col, y_col, color_group)
+                    fig_scatter.update_layout(height=500)
                     st.plotly_chart(fig_scatter, use_container_width=True)
                     
                     st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
                     col_line, col_area = st.columns(2)
                     with col_line:
                         fig_line = VisualizationService.create_line_chart(filtered_df, x_col, y_col, color_group)
+                        fig_line.update_layout(height=400)
                         st.plotly_chart(fig_line, use_container_width=True)
                     with col_area:
                         fig_area = VisualizationService.create_area_chart(filtered_df, x_col, y_col, color_group)
+                        fig_area.update_layout(height=400)
                         st.plotly_chart(fig_area, use_container_width=True)
             else:
                 st.info("Continuous relationships require at least 1 numerical column.")
@@ -290,9 +333,11 @@ def render() -> None:
                 col_pie, col_donut = st.columns(2)
                 with col_pie:
                     fig_pie = VisualizationService.create_pie_chart(filtered_df, prop_cat, values_col)
+                    fig_pie.update_layout(height=400)
                     st.plotly_chart(fig_pie, use_container_width=True)
                 with col_donut:
                     fig_donut = VisualizationService.create_donut_chart(filtered_df, prop_cat, values_col)
+                    fig_donut.update_layout(height=400)
                     st.plotly_chart(fig_donut, use_container_width=True)
             else:
                 st.info("Proportion charts require at least 1 categorical column.")
@@ -320,10 +365,12 @@ def render() -> None:
                 
                 if hier_paths:
                     fig_treemap = VisualizationService.create_treemap(filtered_df, hier_paths, values_col)
+                    fig_treemap.update_layout(height=450)
                     st.plotly_chart(fig_treemap, use_container_width=True)
                     
                     st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
                     fig_sunburst = VisualizationService.create_sunburst(filtered_df, hier_paths, values_col)
+                    fig_sunburst.update_layout(height=450)
                     st.plotly_chart(fig_sunburst, use_container_width=True)
                 else:
                     st.info("Select at least 1 categorical column for hierarchy paths.")

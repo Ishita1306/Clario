@@ -5,6 +5,7 @@ Coordinates and encapsulates core business logic for file validation, loading,
 profiling, and cleaning datasets.
 """
 
+import streamlit as st
 from typing import Union, IO, Dict, Any, Optional
 import pandas as pd
 from analytics.data_loader import load_dataset
@@ -14,6 +15,10 @@ from analytics.cleaning import (
     convert_datatypes,
     rename_columns,
     remove_empty_rows,
+    detect_missing_values,
+    detect_duplicates,
+    auto_detect_datatypes,
+    generate_cleaning_summary,
 )
 from analytics.profiling import (
     dataset_summary,
@@ -22,6 +27,7 @@ from analytics.profiling import (
     memory_usage,
     unique_values,
     statistics_report,
+    auto_profile,
 )
 
 
@@ -56,6 +62,7 @@ class DatasetService:
         return df
 
     @staticmethod
+    @st.cache_data(hash_funcs={pd.DataFrame: lambda df: (id(df), len(df), list(df.columns))})
     def get_profile(df: pd.DataFrame) -> Dict[str, Any]:
         """
         Extract descriptive statistical profile and metadata of a DataFrame.
@@ -78,7 +85,7 @@ class DatasetService:
             "missing": missing,
             "statistics": stats,
             "uniques": uniques,
-            "memory_usage_mb": memory_usage(df),
+            "memory_usage_mb": float(summary["memory_bytes"] / (1024 * 1024)),
         }
 
     @staticmethod
@@ -137,3 +144,29 @@ class DatasetService:
             )
 
         return processed_df
+
+    @staticmethod
+    def detect_missing_values(df: pd.DataFrame) -> Dict[str, Any]:
+        """Expose missing values detection."""
+        return detect_missing_values(df)
+
+    @staticmethod
+    def detect_duplicates(df: pd.DataFrame) -> Dict[str, Any]:
+        """Expose duplicates detection."""
+        return detect_duplicates(df)
+
+    @staticmethod
+    def auto_detect_datatypes(df: pd.DataFrame) -> Dict[str, str]:
+        """Expose automatic data type detection."""
+        return auto_detect_datatypes(df)
+
+    @staticmethod
+    def generate_cleaning_summary(before_df: pd.DataFrame, after_df: pd.DataFrame) -> Dict[str, Any]:
+        """Expose basic cleaning summary generation."""
+        return generate_cleaning_summary(before_df, after_df)
+
+    @staticmethod
+    @st.cache_data(hash_funcs={pd.DataFrame: lambda df: (id(df), len(df), list(df.columns))})
+    def auto_profile(df: pd.DataFrame) -> Dict[str, Any]:
+        """Expose automatic dataset profiling."""
+        return auto_profile(df)

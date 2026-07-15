@@ -27,41 +27,41 @@ def render_table_container(
             .table-wrapper {
                 width: 100%;
                 overflow-x: auto;
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                background: rgba(24, 24, 27, 0.45);
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: var(--glass);
                 margin: 1rem 0 2rem;
             }
             .premium-table {
                 width: 100%;
                 border-collapse: collapse;
                 font-size: 0.85rem;
-                color: #FAFAFA;
+                color: var(--text);
                 text-align: left;
             }
             .premium-table th {
-                background: #18181B;
+                background: var(--surface);
                 padding: 0.85rem 1.15rem;
                 font-weight: 600;
                 font-size: 0.78rem;
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
-                color: #A1A1AA;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                color: var(--subtext);
+                border-bottom: 1px solid var(--border);
                 position: sticky;
                 top: 0;
                 z-index: 10;
             }
             .premium-table td {
                 padding: 0.85rem 1.15rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+                border-bottom: 1px solid var(--border);
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 max-width: 250px;
             }
             .premium-table tbody tr:hover {
-                background: rgba(124, 58, 237, 0.04);
+                background: rgba(99, 102, 241, 0.05);
             }
             .premium-table tbody tr:last-child td {
                 border-bottom: none;

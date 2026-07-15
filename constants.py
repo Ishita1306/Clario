@@ -6,8 +6,8 @@ Environment-specific values belong in settings.py.
 """
 
 # Branding
-PRODUCT_NAME = "InsightFlow"
-PRODUCT_TAGLINE = "Business intelligence platform foundation"
+PRODUCT_NAME = "CLARIO"
+PRODUCT_TAGLINE = "Turn raw data into confident decisions."
 
 # Versioning
 APP_VERSION = "0.1.0"

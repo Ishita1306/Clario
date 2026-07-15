@@ -32,7 +32,7 @@ def render_empty_state(
         bool: True if the action button is clicked, False otherwise.
     """
     default_icon = """
-    <svg viewBox="0 0 24 24" style="width: 32px; height: 32px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;">
+    <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
         <path d="M12 5v14M5 12h14"/>
     </svg>
     """
@@ -42,12 +42,12 @@ def render_empty_state(
     st.markdown(
         textwrap.dedent(
             f"""
-            <div class="glass-card" style="padding: 3rem 2rem; border-radius: 16px; text-align: center; margin: 2rem 0;">
-                <div class="icon-wrap" style="width: 64px; height: 64px; margin: 0 auto 1.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.2);">
+            <div class="glass-card" style="padding: 2.5rem 1.75rem; border-radius: 12px; text-align: center; margin: 1.5rem 0;">
+                <div class="icon-wrap" style="width: 56px; height: 56px; margin: 0 auto 1.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.15);">
                     {textwrap.dedent(resolved_icon).strip()}
                 </div>
-                <h3 style="margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; color: var(--text);">{title}</h3>
-                <p style="margin: 0 auto 2rem; max-width: 420px; font-size: 0.9rem; line-height: 1.6; color: var(--subtext);">{message}</p>
+                <h3 style="margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 600; color: var(--text);">{title}</h3>
+                <p style="margin: 0 auto 1.5rem; max-width: 420px; font-size: 0.85rem; line-height: 1.6; color: var(--subtext);">{message}</p>
             </div>
             """
         ).strip(),

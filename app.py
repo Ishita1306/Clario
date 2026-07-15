@@ -6,12 +6,21 @@ Business logic and feature modules are intentionally excluded at this stage.
 """
 
 import streamlit as st
+from components.sidebar_nav import render_sidebar_branding, render_sidebar_navigation
+from pages import dashboard, upload, overview, visual_analytics, ai_insights, forecasting, reports, settings
+from utils.theme_manager import inject_theme_css
+
+
+@st.cache_data
+def _read_stylesheet() -> str:
+    with open("styles/theme.css", "r", encoding="utf-8") as f:
+        return f.read()
 
 
 def configure_page():
     """Apply global Streamlit page configuration."""
     st.set_page_config(
-        page_title="InsightFlow AI",
+        page_title="CLARIO AI",
         layout="wide",
         initial_sidebar_state="collapsed",
     )
@@ -20,9 +29,9 @@ def configure_page():
 def inject_styles():
     """Inject custom CSS for typography, spacing, and layout."""
     try:
-        with open("styles/theme.css", "r", encoding="utf-8") as f:
-            css_content = f.read()
+        css_content = _read_stylesheet()
         st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+        inject_theme_css()
     except FileNotFoundError:
         st.warning("Theme stylesheet not found. Visual styling may be degraded.")
 
@@ -40,9 +49,9 @@ def render_hero():
                         <span class="hero-badge-dot"></span>
                         AI-Powered Platform
                     </span>
-                    <h1 class="hero-title">InsightFlow <span>AI</span></h1>
+                    <h1 class="hero-title">CLARIO <span>AI</span></h1>
                     <p class="hero-headline">
-                        Transform Business Data Into Intelligent Decisions
+                        Turn raw data into confident decisions.
                     </p>
                     <p class="hero-description">
                         AI-Powered Business Intelligence Platform for teams
@@ -61,7 +70,7 @@ def render_hero():
                             <span class="dash-dot yellow"></span>
                             <span class="dash-dot green"></span>
                             <span class="dash-topbar-title">
-                                InsightFlow Analytics
+                                CLARIO Analytics
                             </span>
                         </div>
                         <div class="dash-body">
@@ -315,13 +324,13 @@ def render_features():
 
 
 def render_why():
-    """Render the 'Why InsightFlow?' value proposition section."""
+    """Render the 'Why CLARIO?' value proposition section."""
     st.markdown(
         """
         <section class="page-section why-section">
             <div class="section-header center">
                 <span class="section-label">Why Us</span>
-                <h2 class="section-title">Why Companies Choose InsightFlow AI</h2>
+                <h2 class="section-title">Why Companies Choose CLARIO AI</h2>
                 <p class="section-subtitle">
                     Trusted by forward-thinking organizations that refuse to
                     compromise on speed, security, or intelligence.
@@ -425,7 +434,7 @@ def render_footer():
             <div class="footer-inner">
                 <div class="footer-top">
                     <div class="footer-brand">
-                        <p class="footer-brand-name">InsightFlow <span>AI</span></p>
+                        <p class="footer-brand-name">CLARIO <span>AI</span></p>
                         <p class="footer-brand-desc">
                             Enterprise business intelligence for teams that
                             demand clarity, speed, and precision at scale.
@@ -466,7 +475,7 @@ def render_footer():
                 </div>
                 <div class="footer-bottom">
                     <p class="footer-copy">
-                        &copy; 2026 InsightFlow AI. All rights reserved.
+                        &copy; 2026 CLARIO AI. All rights reserved.
                     </p>
                     <span class="footer-badge">
                         <span class="footer-dot"></span>
@@ -499,7 +508,7 @@ def render_placeholder(title: str, badge: str = "Upcoming Feature") -> None:
                 <h2 style="margin: 0 0 1rem; font-size: 1.75rem; font-weight: 800; color: var(--text);">{title} Workspace</h2>
                 <p style="margin: 0 auto; max-width: 420px; font-size: 0.95rem; line-height: 1.6; color: var(--subtext);">
                     This space is reserved for Phase 3 advanced extensions. 
-                    InsightFlow AI will connect specialized intelligence models to automate deep business recommendations here.
+                    CLARIO AI will connect specialized intelligence models to automate deep business recommendations here.
                 </p>
             </div>
             """
@@ -523,7 +532,11 @@ def main():
     configure_page()
     inject_styles()
 
-    from components.sidebar_nav import render_sidebar_branding, render_sidebar_navigation
+    # 1. User Authentication Guard
+    if not st.session_state.get("authenticated", False):
+        from pages import auth
+        auth.render()
+        return
 
     if "current_page" not in st.session_state:
         st.session_state["current_page"] = "landing"
@@ -533,28 +546,45 @@ def main():
 
     current_page = st.session_state["current_page"]
 
+    # 2. Workflow Quality Guard
+    if current_page in ["dashboard", "visual_analytics", "ai_insights", "reports"]:
+        if "dataset" in st.session_state:
+            df = st.session_state["dataset"]
+            if "dataset_health_score" not in st.session_state:
+                from pages.upload import calculate_health_score
+                orig_df = st.session_state.get("original_df", df)
+                st.session_state["dataset_health_score"] = calculate_health_score(orig_df)
+                
+            health = st.session_state["dataset_health_score"]
+            if health < 80.0 and st.session_state.get("cleaned_df") is None:
+                st.markdown('<div style="margin-top: 4rem;"></div>', unsafe_allow_html=True)
+                from components.empty_state import render_empty_state
+                render_empty_state(
+                    title="Dataset Requires Cleaning",
+                    message="This dataset requires cleaning before advanced analytics can produce reliable business insights.",
+                    action_label="Clean Dataset",
+                    navigate_to="upload"
+                )
+                return
+
     if current_page == "landing":
         render_landing_page()
     elif current_page == "dashboard":
-        from pages import dashboard
         dashboard.render()
     elif current_page == "upload":
-        from pages import upload
         upload.render()
     elif current_page == "overview":
-        from pages import overview
         overview.render()
     elif current_page == "visual_analytics":
-        from pages import visual_analytics
         visual_analytics.render()
     elif current_page == "ai_insights":
-        render_placeholder("AI Insights")
+        ai_insights.render()
     elif current_page == "forecasting":
-        render_placeholder("Forecasting")
+        forecasting.render()
     elif current_page == "reports":
-        render_placeholder("Reports")
+        reports.render()
     elif current_page == "settings":
-        render_placeholder("Settings", badge="Configuration")
+        settings.render()
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ from components.section_header import render_section_header
 from components.empty_state import render_empty_state
 from components.animated_counter import render_kpi_grid
 from components.dataset_explorer import render_dataset_explorer
+from components.glass_card import glass_card_panel
 from services.dataset_service import DatasetService
 
 
@@ -36,6 +37,9 @@ def render() -> None:
         subtitle=f"Enterprise KPIs and search explorer for {filename}",
         label="Analytics Center",
     )
+
+    if st.session_state.get("cleaned_df") is not None:
+        st.info("All insights and metrics are generated from the cleaned dataset.")
 
     # Fetch profile and metrics summary
     profile = DatasetService.get_profile(df)
@@ -114,8 +118,87 @@ def render() -> None:
         }
     ]
 
-    # Render synchronized KPI cards
-    render_kpi_grid(kpi_cards, session_key=f"anim_dashboard_{filename}")
+    # Redesign spacing using Streamlit columns split-pane layout
+    col_kpi, col_status = st.columns([5, 2])
+
+    with col_kpi:
+        # 1. Dataset Overview
+        st.markdown('<p style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 0; margin-bottom: 0.5rem;">Dataset Overview</p>', unsafe_allow_html=True)
+        overview_kpis = [k for k in kpi_cards if k["key"] in ["rows", "columns"]]
+        render_kpi_grid(overview_kpis, session_key=f"anim_overview_{filename}")
+        
+        # 2. Business Metrics
+        st.markdown('<p style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 1rem; margin-bottom: 0.5rem;">Business Metrics</p>', unsafe_allow_html=True)
+        business_kpis = [k for k in kpi_cards if k["key"] in ["numeric", "categorical"]]
+        render_kpi_grid(business_kpis, session_key=f"anim_business_{filename}")
+        
+        # 3. Data Health
+        st.markdown('<p style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 1rem; margin-bottom: 0.5rem;">Data Health</p>', unsafe_allow_html=True)
+        health_kpis = [k for k in kpi_cards if k["key"] in ["missing", "duplicates"]]
+        render_kpi_grid(health_kpis, session_key=f"anim_health_{filename}")
+        
+        # 4. System Statistics
+        st.markdown('<p style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 1rem; margin-bottom: 0.5rem;">System Statistics</p>', unsafe_allow_html=True)
+        system_kpis = [k for k in kpi_cards if k["key"] in ["memory", "dates"]]
+        render_kpi_grid(system_kpis, session_key=f"anim_system_{filename}")
+
+    with col_status:
+        # 1. Dataset Health Score Card
+        from pages.upload import calculate_health_score
+        health = calculate_health_score(df)
+        if health >= 80:
+            status_color = "#10B981"
+            status_label = "Optimal"
+        elif health >= 50:
+            status_color = "#F59E0B"
+            status_label = "Warnings"
+        else:
+            status_color = "#EF4444"
+            status_label = "Critical"
+
+        with glass_card_panel():
+            st.markdown(
+                f"""
+                <div style="text-align: center; margin-bottom: 0.5rem;">
+                    <p style="margin: 0; font-size: 0.82rem; color: var(--subtext);">Dataset Health</p>
+                    <h3 style="margin: 0.25rem 0; font-size: 2.25rem; font-weight: 700; color: {status_color};">{health:.1f}</h3>
+                    <span style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: #fff; background: {status_color}; padding: 0.15rem 0.5rem; border-radius: 99px;">{status_label}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        # 2. Quick Actions Card
+        with glass_card_panel():
+            st.markdown('<p style="font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 0.75rem;">Quick Actions</p>', unsafe_allow_html=True)
+            if st.button("Clean Dataset", use_container_width=True, key="dash_btn_clean"):
+                st.session_state["current_page"] = "upload"
+                st.rerun()
+            if st.button("Visual Analytics", use_container_width=True, key="dash_btn_visual"):
+                st.session_state["current_page"] = "visual_analytics"
+                st.rerun()
+            if st.button("Insight AI", use_container_width=True, key="dash_btn_ai"):
+                st.session_state["current_page"] = "ai_insights"
+                st.rerun()
+
+        # 3. Recent Activity Log
+        if "activity_log" not in st.session_state:
+            st.session_state["activity_log"] = [
+                {"time": "10:14 AM", "event": "Session workspace loaded."},
+                {"time": "10:15 AM", "event": f"File '{filename}' analyzed."},
+            ]
+
+        with glass_card_panel():
+            st.markdown('<p style="font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 0.75rem;">Recent Activity</p>', unsafe_allow_html=True)
+            for item in st.session_state["activity_log"][:3]:
+                st.markdown(
+                    f"""
+                    <div style="font-size: 0.78rem; line-height: 1.4; margin-bottom: 0.5rem; border-left: 2px solid var(--border); padding-left: 0.5rem;">
+                        <span style="color: var(--subtext); font-weight: 500;">{item['time']}</span> - <span style="color: var(--text);">{item['event']}</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
     st.markdown('<div style="margin-top: 2rem; border-top: 1px solid var(--border);"></div>', unsafe_allow_html=True)
 

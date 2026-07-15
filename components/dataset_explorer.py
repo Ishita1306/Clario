@@ -157,7 +157,7 @@ def render_dataset_explorer(df: pd.DataFrame) -> None:
         st.download_button(
             label=f"Download Filtered Dataset ({total_records:,} rows)",
             data=csv_data,
-            file_name="insightflow_filtered_dataset.csv",
+            file_name="clario_filtered_dataset.csv",
             mime="text/csv",
             use_container_width=True,
             type="primary"

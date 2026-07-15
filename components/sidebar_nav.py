@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import quote
 
+# pyrefly: ignore [missing-import]
 import streamlit as st
 
 
@@ -82,7 +83,7 @@ NAV_SECTIONS: tuple[NavSection, ...] = (
         items=(
             NavItem(
                 key="ai_insights",
-                title="AI Insights",
+                title="Insight AI",
                 description="Smart recommendations",
                 icon_paths=(
                     'M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.4V12h4a2 2 0 0 1 2 2v1h-2v5H8v-5H6v-1a2 2 0 0 1 2-2h4V9.4A4 4 0 0 1 12 2z'
@@ -96,7 +97,7 @@ NAV_SECTIONS: tuple[NavSection, ...] = (
             ),
             NavItem(
                 key="reports",
-                title="Reports",
+                title="Report Studio",
                 description="Executive exports",
                 icon_paths=(
                     'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 15l2 2 4-4'
@@ -141,6 +142,7 @@ def _svg_mask_uri(paths: str) -> str:
     return f"url(\"data:image/svg+xml,{quote(svg)}\")"
 
 
+@st.cache_data
 def _build_nav_icon_styles() -> str:
     """Generate per-item icon mask rules for sidebar pill buttons."""
     rules: list[str] = []
@@ -155,6 +157,16 @@ def _build_nav_icon_styles() -> str:
             rules.append(
                 f"{selector} {{ -webkit-mask-image: {mask}; mask-image: {mask}; }}"
             )
+            
+    # Append signout custom style rule
+    signout_mask = _svg_mask_uri("M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9")
+    signout_selector = (
+        '[data-testid="stSidebar"] '
+        '[data-testid="element-container"]:has(.nav-pill-seed[data-nav="signout"]) '
+        '+ [data-testid="element-container"] button::before'
+    )
+    rules.append(f"{signout_selector} {{ -webkit-mask-image: {signout_mask}; mask-image: {signout_mask}; }}")
+    
     return "\n".join(rules)
 
 
@@ -170,8 +182,8 @@ def render_sidebar_branding() -> None:
                 </svg>
             </div>
             <div class="sidebar-brand-copy">
-                <p class="sidebar-brand-name">InsightFlow <span>AI</span></p>
-                <p class="sidebar-brand-tagline">Analytics Platform</p>
+                <p class="sidebar-brand-name">CLARIO <span>AI</span></p>
+                <p class="sidebar-brand-tagline">Turn raw data into confident decisions.</p>
             </div>
         </div>
         """,
@@ -221,3 +233,12 @@ def render_sidebar_navigation(current_page: str) -> None:
 
         if section_index < len(NAV_SECTIONS) - 1:
             st.sidebar.markdown('<div class="sidebar-nav-spacer"></div>', unsafe_allow_html=True)
+
+    # Render a clean divider and Sign Out button at the bottom
+    st.sidebar.markdown('<div class="sidebar-nav-spacer" style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem;"></div>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="nav-pill-seed" data-nav="signout" data-active="false"></span>', unsafe_allow_html=True)
+    if st.sidebar.button("Sign Out", key="sidebar_signout", use_container_width=True):
+        st.session_state["authenticated"] = False
+        st.session_state["user"] = None
+        st.session_state["current_page"] = "landing"
+        st.rerun()

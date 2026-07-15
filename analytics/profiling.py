@@ -20,19 +20,22 @@ def dataset_summary(df: pd.DataFrame) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: Summary stats (rows, columns, duplicates, missing cells, data types).
     """
-    total_cells = int(df.size)
-    missing_cells = int(df.isnull().sum().sum())
+    # Exclude columns that are 100% missing (all NaN)
+    df_valid = df.loc[:, ~df.isna().all()]
+
+    total_cells = int(df_valid.size)
+    missing_cells = int(df_valid.isnull().sum().sum())
     missing_pct = float(missing_cells / total_cells * 100) if total_cells > 0 else 0.0
-    duplicate_rows = int(df.duplicated().sum())
+    duplicate_rows = int(df_valid.duplicated().sum())
 
     # Count of data types
-    num_cols = len(df.select_dtypes(include=[np.number]).columns)
-    date_cols = len(df.select_dtypes(include=[np.datetime64, "datetime64[ns]"]).columns)
-    cat_cols = len(df.select_dtypes(include=["object", "category", "bool"]).columns)
+    num_cols = len(df_valid.select_dtypes(include=[np.number]).columns)
+    date_cols = len(df_valid.select_dtypes(include=[np.datetime64, "datetime64[ns]"]).columns)
+    cat_cols = len(df_valid.select_dtypes(include=["object", "category", "bool"]).columns)
 
     return {
         "rows": len(df),
-        "columns": len(df.columns),
+        "columns": len(df_valid.columns),
         "total_cells": total_cells,
         "missing_cells": missing_cells,
         "missing_pct": missing_pct,
@@ -40,7 +43,7 @@ def dataset_summary(df: pd.DataFrame) -> Dict[str, Any]:
         "numeric_cols": num_cols,
         "datetime_cols": date_cols,
         "categorical_cols": cat_cols,
-        "memory_bytes": int(df.memory_usage(deep=True).sum()),
+        "memory_bytes": int(df_valid.memory_usage(deep=True).sum()),
     }
 
 
@@ -143,10 +146,48 @@ def statistics_report(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Descriptive statistics (count, mean, std, min, percentiles, max).
     """
-    numeric_df = df.select_dtypes(include=[np.number])
+    # Exclude columns that are 100% missing (all NaN)
+    df_valid = df.loc[:, ~df.isna().all()]
+    numeric_df = df_valid.select_dtypes(include=[np.number])
     if numeric_df.empty:
         return pd.DataFrame()
     stats = numeric_df.describe().transpose()
     # Reset index to include column name as a standard attribute
     stats = stats.reset_index().rename(columns={"index": "Attribute"})
     return stats
+
+
+def auto_profile(df: pd.DataFrame) -> Dict[str, Any]:
+    """
+    Automatically generate structural and storage profiling metrics for a dataset.
+
+    Args:
+        df (pd.DataFrame): Input dataset.
+
+    Returns:
+        Dict[str, Any]: Profiling metrics containing rows, columns, missing values,
+                        duplicates, numeric/categorical column counts, and memory usage.
+    """
+    # Exclude columns that are 100% missing (all NaN)
+    df_valid = df.loc[:, ~df.isna().all()]
+
+    rows = len(df)
+    columns = len(df_valid.columns)
+    missing_values = int(df_valid.isnull().sum().sum())
+    duplicate_rows = int(df_valid.duplicated().sum())
+    numeric_cols = len(df_valid.select_dtypes(include=[np.number]).columns)
+    categorical_cols = len(df_valid.select_dtypes(include=["object", "category", "bool"]).columns)
+    
+    # Memory footprint in MB
+    memory_bytes = int(df_valid.memory_usage(deep=True).sum())
+    memory_usage_mb = float(memory_bytes / (1024 * 1024))
+    
+    return {
+        "rows": rows,
+        "columns": columns,
+        "missing_values": missing_values,
+        "duplicate_rows": duplicate_rows,
+        "numeric_columns": numeric_cols,
+        "categorical_columns": categorical_cols,
+        "memory_usage_mb": memory_usage_mb,
+    }

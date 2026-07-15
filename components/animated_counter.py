@@ -70,26 +70,24 @@ def render_kpi_grid(kpis: List[Dict[str, Any]], session_key: str = "animated_kpi
         # Trend element
         trend_html = ""
         if kpi.get("trend"):
-            trend_color = "#4ade80" if kpi.get("trend_positive", True) else "#f87171"
+            trend_color = "#10B981" if kpi.get("trend_positive", True) else "#EF4444"
             trend_html = f'<span class="kpi-trend" style="color: {trend_color};">{kpi["trend"]}</span>'
             
         detail_html = f'<p class="kpi-detail">{kpi["detail"]}</p>' if kpi.get("detail") else ""
         
-        return f"""
-        <div class="kpi-card glass-card" style="margin-bottom: 1rem; min-height: 165px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div class="kpi-top" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                <div class="kpi-icon-wrap icon-box" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.12);">
-                    {resolved_icon}
-                </div>
-                {trend_html}
-            </div>
-            <div>
-                <p class="kpi-value" style="margin: 0; font-size: 1.8rem; font-weight: 800; color: #FAFAFA; letter-spacing: -0.03em;">{val_str}</p>
-                <p class="kpi-label" style="margin: 0.25rem 0 0.5rem; font-size: 0.85rem; font-weight: 600; color: #FAFAFA;">{kpi["label"]}</p>
-                {detail_html}
-            </div>
-        </div>
-        """
+        return (
+            f'<div class="kpi-card glass-card" style="margin-bottom: 1rem; min-height: 165px; display: flex; flex-direction: column; justify-content: space-between;">'
+            f'<div class="kpi-top" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">'
+            f'<div class="kpi-icon-wrap icon-box" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.15);">{resolved_icon.strip()}</div>'
+            f'{trend_html}'
+            f'</div>'
+            f'<div>'
+            f'<p class="kpi-value" style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em;">{val_str}</p>'
+            f'<p class="kpi-label" style="margin: 0.25rem 0 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--text);">{kpi["label"]}</p>'
+            f'{detail_html}'
+            f'</div>'
+            f'</div>'
+        )
 
     # If animating, loop progress in parallel
     if should_animate:

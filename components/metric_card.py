@@ -33,7 +33,7 @@ def render_metric_card(
     )
     resolved_icon = icon_svg if icon_svg else default_icon
 
-    trend_color = "#4ade80" if trend_positive else "#f87171"
+    trend_color = "#10B981" if trend_positive else "#EF4444"
     trend_html = (
         f'<span class="kpi-trend" style="color: {trend_color};">{trend}</span>'
         if trend
@@ -42,20 +42,15 @@ def render_metric_card(
 
     detail_html = f'<p class="kpi-detail">{detail}</p>' if detail else ""
 
-    import textwrap
-    card_html = textwrap.dedent(
-        f"""
-        <div class="kpi-card glass-card" style="margin-bottom: 1rem;">
-            <div class="kpi-top">
-                <div class="kpi-icon-wrap icon-box">
-                    {textwrap.dedent(resolved_icon).strip()}
-                </div>
-                {trend_html}
-            </div>
-            <p class="kpi-value">{value}</p>
-            <p class="kpi-label">{label}</p>
-            {detail_html}
-        </div>
-        """
-    ).strip()
+    card_html = (
+        f'<div class="kpi-card glass-card" style="margin-bottom: 1rem;">'
+        f'<div class="kpi-top">'
+        f'<div class="kpi-icon-wrap icon-box">{resolved_icon.strip()}</div>'
+        f'{trend_html}'
+        f'</div>'
+        f'<p class="kpi-value">{value}</p>'
+        f'<p class="kpi-label">{label}</p>'
+        f'{detail_html}'
+        f'</div>'
+    )
     st.markdown(card_html, unsafe_allow_html=True)

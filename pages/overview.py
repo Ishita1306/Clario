@@ -19,28 +19,37 @@ from services.dataset_service import DatasetService
 
 
 def apply_plotly_theme(fig: go.Figure) -> None:
-    """Apply the platform's luxury dark theme properties to a Plotly figure."""
+    """Apply the active theme properties to a Plotly figure."""
+    from utils.theme_manager import get_current_theme
+    theme_vars = get_current_theme()
+    paper_bg = "rgba(0,0,0,0)"
+    font_col = theme_vars['text']
+    legend_col = theme_vars['subtext']
+    grid_col = theme_vars['border']
+    zero_col = theme_vars['border']
+    axis_col = theme_vars['subtext']
+
     fig.update_layout(
-        paper_bgcolor="rgba(24, 24, 27, 0.65)",
+        paper_bgcolor=paper_bg,
         plot_bgcolor="rgba(0, 0, 0, 0)",
         font_family="Inter, -apple-system, sans-serif",
-        font_color="#FAFAFA",
-        title_font_color="#FAFAFA",
-        legend_font_color="#A1A1AA",
+        font_color=font_col,
+        title_font_color=font_col,
+        legend_font_color=legend_col,
         margin=dict(l=40, r=40, t=50, b=40),
         xaxis=dict(
-            gridcolor="rgba(255, 255, 255, 0.08)",
-            zerolinecolor="rgba(255, 255, 255, 0.15)",
-            color="#A1A1AA",
+            gridcolor=grid_col,
+            zerolinecolor=zero_col,
+            color=axis_col,
             tickfont=dict(size=10),
-            title=dict(font=dict(color="#A1A1AA", size=11)),
+            title=dict(font=dict(color=axis_col, size=11)),
         ),
         yaxis=dict(
-            gridcolor="rgba(255, 255, 255, 0.08)",
-            zerolinecolor="rgba(255, 255, 255, 0.15)",
-            color="#A1A1AA",
+            gridcolor=grid_col,
+            zerolinecolor=zero_col,
+            color=axis_col,
             tickfont=dict(size=10),
-            title=dict(font=dict(color="#A1A1AA", size=11)),
+            title=dict(font=dict(color=axis_col, size=11)),
         ),
     )
 
@@ -69,6 +78,8 @@ def render() -> None:
     # 1. Metric stats
     profile = DatasetService.get_profile(df)
     summary = profile["summary"]
+    from utils.theme_manager import get_current_theme
+    theme_vars = get_current_theme()
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -125,9 +136,10 @@ def render() -> None:
                 values=values,
                 hole=0.6,
                 title="Data Types Distribution",
-                color_discrete_sequence=["#7C3AED", "#22D3EE", "#8B5CF6"],
+                color_discrete_sequence=[theme_vars['primary'], theme_vars['accent'], theme_vars['subtext']],
             )
             apply_plotly_theme(fig_types)
+            fig_types.update_layout(height=380)
             st.plotly_chart(fig_types, use_container_width=True)
         else:
             st.info("No columns available to plot data types.")
@@ -144,9 +156,10 @@ def render() -> None:
                 x="Column",
                 y="Missing Count",
                 title="Missing Values Count per Column",
-                color_discrete_sequence=["#22D3EE"],
+                color_discrete_sequence=[theme_vars['primary']],
             )
             apply_plotly_theme(fig_missing)
+            fig_missing.update_layout(height=380)
             st.plotly_chart(fig_missing, use_container_width=True)
         else:
             # Render a premium visualization representing complete dataset
@@ -154,18 +167,18 @@ def render() -> None:
                 go.Indicator(
                     mode="number+gauge",
                     value=100,
-                    number={"suffix": "%", "font": {"color": "#4ade80"}},
-                    title={"text": "Data Completeness Rate", "font": {"color": "#FAFAFA"}},
+                    number={"suffix": "%", "font": {"color": "#10B981"}},
+                    title={"text": "Data Completeness Rate", "font": {"color": theme_vars['text']}},
                     gauge={
-                        "axis": {"range": [0, 100], "tickcolor": "#FAFAFA"},
-                        "bar": {"color": "#4ade80"},
-                        "bgcolor": "rgba(255,255,255,0.05)",
-                        "steps": [{"range": [0, 100], "color": "rgba(124,58,237,0.1)"}],
+                        "axis": {"range": [0, 100], "tickcolor": theme_vars['text']},
+                        "bar": {"color": "#10B981"},
+                        "bgcolor": "rgba(0,0,0,0.02)" if st.session_state.get("theme") == "light" else "rgba(255,255,255,0.02)",
+                        "steps": [{"range": [0, 100], "color": "rgba(99,102,241,0.04)"}],
                     },
                 )
             )
             apply_plotly_theme(fig_complete)
-            fig_complete.update_layout(height=350)
+            fig_complete.update_layout(height=380)
             st.plotly_chart(fig_complete, use_container_width=True)
 
     # 3. Distributions & Correlation Row
@@ -173,7 +186,7 @@ def render() -> None:
 
     with grid_col3:
         # Numeric Feature Distribution Selector
-        numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+        numeric_cols = df.loc[:, ~df.isna().all()].select_dtypes(include=[np.number]).columns.tolist()
         if numeric_cols:
             selected_num = st.selectbox(
                 "Select Numeric Variable to Plot Distribution", numeric_cols
@@ -183,16 +196,17 @@ def render() -> None:
                 x=selected_num,
                 marginal="box",
                 title=f"Distribution of {selected_num}",
-                color_discrete_sequence=["#7C3AED"],
+                color_discrete_sequence=[theme_vars['primary']],
             )
             apply_plotly_theme(fig_dist)
+            fig_dist.update_layout(height=380)
             st.plotly_chart(fig_dist, use_container_width=True)
         else:
             st.info("No numerical features found for distributions.")
 
     with grid_col4:
         # Categorical Feature Frequency Selector
-        categorical_cols = df.select_dtypes(
+        categorical_cols = df.loc[:, ~df.isna().all()].select_dtypes(
             include=["object", "category", "bool"]
         ).columns.tolist()
         if categorical_cols:
@@ -210,16 +224,16 @@ def render() -> None:
                 y=selected_cat,
                 orientation="h",
                 title=f"Top Categories in {selected_cat}",
-                color_discrete_sequence=["#22D3EE"],
+                color_discrete_sequence=[theme_vars['accent']],
             )
-            fig_freq.update_layout(yaxis=dict(autorange="reversed"))
+            fig_freq.update_layout(yaxis=dict(autorange="reversed"), height=380)
             apply_plotly_theme(fig_freq)
             st.plotly_chart(fig_freq, use_container_width=True)
         else:
             st.info("No categorical features found for frequencies.")
 
     # 4. Correlation Heatmap (Full width card)
-    numeric_df = df.select_dtypes(include=[np.number])
+    numeric_df = df.loc[:, ~df.isna().all()].select_dtypes(include=[np.number])
     if len(numeric_df.columns) > 1:
         st.markdown('<h4 style="margin-top: 2rem; font-weight: 700;">Correlation Matrix</h4>', unsafe_allow_html=True)
         corr = numeric_df.corr()
@@ -229,14 +243,15 @@ def render() -> None:
             x=corr.columns,
             y=corr.columns,
             color_continuous_scale=[
-                [0.0, "#7C3AED"],
-                [0.5, "#18181B"],
-                [1.0, "#22D3EE"],
+                [0.0, theme_vars['primary']],
+                [0.5, theme_vars['bg']],
+                [1.0, theme_vars['accent']],
             ],
             aspect="auto",
             title="Pearson Correlation Heatmap",
         )
         apply_plotly_theme(fig_heat)
+        fig_heat.update_layout(height=450)
         st.plotly_chart(fig_heat, use_container_width=True)
     elif len(numeric_df.columns) == 1:
         st.info("Correlation heatmap requires at least two numerical columns. Only one numerical column detected.")
