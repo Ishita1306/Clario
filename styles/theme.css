@@ -166,9 +166,28 @@ footer { visibility: hidden; }
 /* ── Hero ─────────────────────────────────────────────── */
 .hero-section {
     position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
     overflow: hidden;
-    padding: 4rem 0 5rem;
+    padding: 4rem max(1.5rem, calc((100vw - 1200px) / 2 + 1.25rem)) 5rem;
     margin-bottom: 4rem;
+    background:
+        radial-gradient(
+            ellipse 55% 70% at 15% 40%,
+            rgba(124, 58, 237, 0.22),
+            transparent 65%
+        ),
+        radial-gradient(
+            ellipse 45% 55% at 85% 60%,
+            rgba(34, 211, 238, 0.14),
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(124, 58, 237, 0.06) 0%,
+            transparent 70%
+        );
 }
 
 .hero-grid {
@@ -1055,12 +1074,13 @@ footer { visibility: hidden; }
 }
 
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
+    position: relative !important;
     background: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
     padding: 0.75rem 1rem !important;
     border-radius: 12px !important;
     color: var(--subtext) !important;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
     width: 100% !important;
     cursor: pointer !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
@@ -1070,7 +1090,6 @@ footer { visibility: hidden; }
     background: rgba(124, 58, 237, 0.06) !important;
     border-color: rgba(124, 58, 237, 0.25) !important;
     color: var(--text) !important;
-    transform: translateX(4px);
 }
 
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label[data-checked="true"] {
@@ -1095,7 +1114,28 @@ footer { visibility: hidden; }
 }
 
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] input[type="radio"] {
-    display: none !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+}
+
+/* ── Bordered workspace panels (glass card containers) ─── */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: var(--glass) !important;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+        0 12px 40px rgba(0, 0, 0, 0.35);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
 }
 
 /* ── Custom UI Additions ────────────────────────────────── */

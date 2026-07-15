@@ -19,14 +19,13 @@ def render() -> None:
     """Render the dashboard workspace page."""
     # Check if dataset is in memory
     if "dataset" not in st.session_state:
-        clicked = render_empty_state(
+        render_empty_state(
             title="No Dataset Selected",
             message="We couldn't locate an active dataset in memory. Please upload a dataset first.",
             action_label="Go to Upload Workspace",
+            navigate_to="upload",
+            navigate_label="Upload",
         )
-        if clicked:
-            st.session_state["current_page"] = "upload"
-            st.rerun()
         return
 
     df = st.session_state["dataset"]

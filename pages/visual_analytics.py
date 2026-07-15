@@ -12,7 +12,7 @@ import numpy as np
 
 from components.section_header import render_section_header
 from components.empty_state import render_empty_state
-from components.glass_card import glass_card_wrapper_start, glass_card_wrapper_end
+from components.glass_card import glass_card_panel
 from services.visualization_service import VisualizationService
 
 
@@ -20,14 +20,13 @@ def render() -> None:
     """Render the Visual Analytics workspace."""
     # Check dataset
     if "dataset" not in st.session_state:
-        clicked = render_empty_state(
+        render_empty_state(
             title="No Dataset Selected",
             message="We couldn't locate an active dataset in memory. Please upload a dataset first.",
             action_label="Go to Upload Workspace",
+            navigate_to="upload",
+            navigate_label="Upload",
         )
-        if clicked:
-            st.session_state["current_page"] = "upload"
-            st.rerun()
         return
 
     df = st.session_state["dataset"]
@@ -50,104 +49,97 @@ def render() -> None:
 
     with col_filters:
         st.markdown('<h4 style="margin-top: 0; font-weight: 700; color: #FAFAFA;">Interactive Filters</h4>', unsafe_allow_html=True)
-        
+
         # Wrap filters inside glass card
-        glass_card_wrapper_start()
-        
-        # Choose which columns to activate filters for
-        st.markdown('<p style="font-size: 0.85rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.5rem;">Select Filters to Apply</p>', unsafe_allow_html=True)
-        
-        active_numeric = st.multiselect(
-            "Numeric variables",
-            options=numeric_cols,
-            default=numeric_cols[:1] if numeric_cols else [],
-            key="act_num"
-        )
-        
-        active_categorical = st.multiselect(
-            "Categorical variables",
-            options=categorical_cols,
-            default=categorical_cols[:1] if categorical_cols else [],
-            key="act_cat"
-        )
-        
-        active_dates = st.multiselect(
-            "Date variables",
-            options=datetime_cols,
-            default=datetime_cols[:1] if datetime_cols else [],
-            key="act_date"
-        )
-        
-        st.markdown('<div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;"></div>', unsafe_allow_html=True)
-        
-        # 1. Build Filter Inputs and Apply in real-time
-        filtered_df = df.copy()
-        
-        # A. Apply numeric ranges
-        for col in active_numeric:
-            c_min = float(df[col].min()) if not pd.isna(df[col].min()) else 0.0
-            c_max = float(df[col].max()) if not pd.isna(df[col].max()) else 100.0
-            if c_min == c_max:
-                continue
-            val_range = st.slider(
-                f"{col} Range",
-                min_value=c_min,
-                max_value=c_max,
-                value=(c_min, c_max),
-                key=f"val_num_{col}"
-            )
-            filtered_df = filtered_df[(filtered_df[col] >= val_range[0]) & (filtered_df[col] <= val_range[1])]
+        with glass_card_panel():
+            st.markdown('<p style="font-size: 0.85rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.5rem;">Select Filters to Apply</p>', unsafe_allow_html=True)
 
-        # B. Apply categorical multi-selects
-        for col in active_categorical:
-            options = df[col].dropna().unique().tolist()
-            # To keep lists manageable, default select top 10 if there are many
-            default_selection = options[:10] if len(options) > 10 else options
-            selected_vals = st.multiselect(
-                f"{col} Values",
-                options=options,
-                default=default_selection,
-                key=f"val_cat_{col}"
+            active_numeric = st.multiselect(
+                "Numeric variables",
+                options=numeric_cols,
+                default=numeric_cols[:1] if numeric_cols else [],
+                key="act_num"
             )
-            filtered_df = filtered_df[filtered_df[col].isin(selected_vals)]
 
-        # C. Apply date ranges
-        for col in active_dates:
-            dates = pd.to_datetime(df[col], errors="coerce").dropna()
-            if not dates.empty:
-                min_d = dates.min().date()
-                max_d = dates.max().date()
-                # Ensure start and end are unique
-                if min_d == max_d:
+            active_categorical = st.multiselect(
+                "Categorical variables",
+                options=categorical_cols,
+                default=categorical_cols[:1] if categorical_cols else [],
+                key="act_cat"
+            )
+
+            active_dates = st.multiselect(
+                "Date variables",
+                options=datetime_cols,
+                default=datetime_cols[:1] if datetime_cols else [],
+                key="act_date"
+            )
+
+            st.markdown('<div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;"></div>', unsafe_allow_html=True)
+
+            # 1. Build Filter Inputs and Apply in real-time
+            filtered_df = df.copy()
+
+            # A. Apply numeric ranges
+            for col in active_numeric:
+                c_min = float(df[col].min()) if not pd.isna(df[col].min()) else 0.0
+                c_max = float(df[col].max()) if not pd.isna(df[col].max()) else 100.0
+                if c_min == c_max:
                     continue
-                date_range = st.date_input(
-                    f"{col} Date Range",
-                    value=[min_d, max_d],
-                    min_value=min_d,
-                    max_value=max_d,
-                    key=f"val_date_{col}"
+                val_range = st.slider(
+                    f"{col} Range",
+                    min_value=c_min,
+                    max_value=c_max,
+                    value=(c_min, c_max),
+                    key=f"val_num_{col}"
                 )
-                
-                # Check for full range selection
-                if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
-                    start_date, end_date = date_range
-                    dt_col = pd.to_datetime(filtered_df[col], errors="coerce")
-                    filtered_df = filtered_df[(dt_col.dt.date >= start_date) & (dt_col.dt.date <= end_date)]
+                filtered_df = filtered_df[(filtered_df[col] >= val_range[0]) & (filtered_df[col] <= val_range[1])]
 
-        # Show record counts
-        total_rows = len(df)
-        filtered_rows = len(filtered_df)
-        st.markdown(
-            f"""
-            <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(34, 211, 238, 0.04); border: 1px solid rgba(34, 211, 238, 0.12); text-align: center;">
-                <span style="font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em;">Rows Filtered</span>
-                <p style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--accent);">{filtered_rows:,} / {total_rows:,}</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            # B. Apply categorical multi-selects
+            for col in active_categorical:
+                options = df[col].dropna().unique().tolist()
+                default_selection = options[:10] if len(options) > 10 else options
+                selected_vals = st.multiselect(
+                    f"{col} Values",
+                    options=options,
+                    default=default_selection,
+                    key=f"val_cat_{col}"
+                )
+                filtered_df = filtered_df[filtered_df[col].isin(selected_vals)]
 
-        glass_card_wrapper_end()
+            # C. Apply date ranges
+            for col in active_dates:
+                dates = pd.to_datetime(df[col], errors="coerce").dropna()
+                if not dates.empty:
+                    min_d = dates.min().date()
+                    max_d = dates.max().date()
+                    if min_d == max_d:
+                        continue
+                    date_range = st.date_input(
+                        f"{col} Date Range",
+                        value=[min_d, max_d],
+                        min_value=min_d,
+                        max_value=max_d,
+                        key=f"val_date_{col}"
+                    )
+
+                    if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
+                        start_date, end_date = date_range
+                        dt_col = pd.to_datetime(filtered_df[col], errors="coerce")
+                        filtered_df = filtered_df[(dt_col.dt.date >= start_date) & (dt_col.dt.date <= end_date)]
+
+            # Show record counts
+            total_rows = len(df)
+            filtered_rows = len(filtered_df)
+            st.markdown(
+                f"""
+                <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(34, 211, 238, 0.04); border: 1px solid rgba(34, 211, 238, 0.12); text-align: center;">
+                    <span style="font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em;">Rows Filtered</span>
+                    <p style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--accent);">{filtered_rows:,} / {total_rows:,}</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     with col_charts:
         st.markdown('<h4 style="margin-top: 0; font-weight: 700; color: #FAFAFA;">Visualization Canvas</h4>', unsafe_allow_html=True)
@@ -158,9 +150,6 @@ def render() -> None:
             return
 
         # Organize charts into beautiful tabs
-        tab_corr, tab_dist, tab_relation, tab_prop, tab_hierarchy = st.columns(5)
-        
-        # Tabs navigation selection using st.tabs for native Streamlit styling but premium container wrapping
         tab_list = st.tabs([
             "Correlation & Heatmaps", 
             "Variable Distributions", 

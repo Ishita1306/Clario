@@ -5,6 +5,8 @@ Provides a styled container with glassmorphic backdrop filter and borders,
 supporting dark theme aesthetics.
 """
 
+from contextlib import contextmanager
+
 import streamlit as st
 
 
@@ -20,19 +22,28 @@ def render_glass_card(content_html: str, class_name: str = "") -> None:
     st.markdown(card_html, unsafe_allow_html=True)
 
 
+@contextmanager
+def glass_card_panel():
+    """
+    Wrap Streamlit widgets in a glass-styled bordered container.
+
+    Uses native Streamlit containers instead of split HTML tags, which would
+    otherwise render orphaned closing tags as visible text.
+    """
+    with st.container(border=True):
+        yield
+
+
 def glass_card_wrapper_start(style_attrs: str = "") -> None:
     """
-    Inject structural opening tag for custom styled HTML containers.
+    Deprecated: use glass_card_panel() context manager instead.
 
-    Args:
-        style_attrs (str): Inline CSS style attributes.
+    Kept for backward compatibility; delegates to a bordered container marker.
     """
-    st.markdown(
-        f'<div class="glass-card" style="padding: 1.5rem; border-radius: 14px; margin-bottom: 1rem; {style_attrs}">',
-        unsafe_allow_html=True,
-    )
+    del style_attrs
+    st.markdown('<div class="glass-card-panel-marker"></div>', unsafe_allow_html=True)
 
 
 def glass_card_wrapper_end() -> None:
-    """Inject closing tag for custom styled HTML containers."""
-    st.markdown("</div>", unsafe_allow_html=True)
+    """Deprecated: no-op. Closing tags are not injected to avoid visible HTML."""
+    return

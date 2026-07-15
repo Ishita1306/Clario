@@ -14,6 +14,8 @@ def render_empty_state(
     message: str,
     icon_svg: Optional[str] = None,
     action_label: Optional[str] = None,
+    navigate_to: Optional[str] = None,
+    navigate_label: Optional[str] = None,
 ) -> bool:
     """
     Render a premium empty state container with an optional action button.
@@ -23,6 +25,8 @@ def render_empty_state(
         message (str): Explanatory text.
         icon_svg (Optional[str]): SVG icon path or content. Defaults to a database upload icon.
         action_label (Optional[str]): Label for an action button.
+        navigate_to (Optional[str]): Internal page key to navigate to on action click.
+        navigate_label (Optional[str]): Sidebar label matching navigate_to.
 
     Returns:
         bool: True if the action button is clicked, False otherwise.
@@ -50,6 +54,12 @@ def render_empty_state(
     if action_label:
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            return st.button(action_label, use_container_width=True, type="primary")
+            clicked = st.button(action_label, use_container_width=True, type="primary")
+            if clicked and navigate_to:
+                st.session_state["current_page"] = navigate_to
+                if navigate_label:
+                    st.session_state["nav_selection"] = navigate_label
+                st.rerun()
+            return clicked
 
     return False

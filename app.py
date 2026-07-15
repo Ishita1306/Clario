@@ -562,16 +562,23 @@ def main():
         "Settings": "settings"
     }
 
-    # Safe lookup for index
-    current = st.session_state["current_page"]
     reverse_map = {v: k for k, v in page_map.items()}
-    selected_option = reverse_map.get(current, "Home Page")
-    
+
+    # Keep sidebar radio and session page in sync (supports programmatic navigation)
+    if "nav_selection" not in st.session_state:
+        st.session_state["nav_selection"] = reverse_map.get(
+            st.session_state["current_page"], "Home Page"
+        )
+
+    expected_nav = reverse_map.get(st.session_state["current_page"], "Home Page")
+    if st.session_state["nav_selection"] != expected_nav:
+        st.session_state["nav_selection"] = expected_nav
+
     selected_page = st.sidebar.radio(
         "Navigation",
         options=navigation_options,
-        index=navigation_options.index(selected_option),
-        label_visibility="collapsed"
+        key="nav_selection",
+        label_visibility="collapsed",
     )
     st.session_state["current_page"] = page_map[selected_page]
 

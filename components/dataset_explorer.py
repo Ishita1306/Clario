@@ -12,7 +12,7 @@ import numpy as np
 import streamlit as st
 
 from components.table_container import render_table_container
-from components.glass_card import glass_card_wrapper_start, glass_card_wrapper_end
+from components.glass_card import glass_card_panel
 
 
 def render_dataset_explorer(df: pd.DataFrame) -> None:
@@ -29,47 +29,44 @@ def render_dataset_explorer(df: pd.DataFrame) -> None:
         st.session_state["exp_page"] = 0
         
     # Search and Control Panel inside glass card
-    glass_card_wrapper_start()
-    
-    col_search, col_sort_by, col_sort_order = st.columns([2, 1, 1])
-    
-    with col_search:
-        search_query = st.text_input(
-            "Search keywords",
-            value="",
-            placeholder="Search all columns...",
-            help="Filters rows matching the search term (case-insensitive)."
-        )
-    with col_sort_by:
-        sort_col = st.selectbox(
-            "Sort by column",
-            options=["[None]"] + df.columns.tolist(),
-            index=0
-        )
-    with col_sort_order:
-        sort_order = st.radio(
-            "Sort direction",
-            options=["Ascending", "Descending"],
-            horizontal=True,
-            disabled=(sort_col == "[None]")
-        )
-        
-    col_vis, col_page_size = st.columns([3, 1])
-    with col_vis:
-        visible_cols = st.multiselect(
-            "Columns to display",
-            options=df.columns.tolist(),
-            default=df.columns.tolist(),
-            help="Select columns to show or hide in the grid view."
-        )
-    with col_page_size:
-        page_size = st.selectbox(
-            "Rows per page",
-            options=[10, 25, 50, 100],
-            index=0
-        )
-        
-    glass_card_wrapper_end()
+    with glass_card_panel():
+        col_search, col_sort_by, col_sort_order = st.columns([2, 1, 1])
+
+        with col_search:
+            search_query = st.text_input(
+                "Search keywords",
+                value="",
+                placeholder="Search all columns...",
+                help="Filters rows matching the search term (case-insensitive)."
+            )
+        with col_sort_by:
+            sort_col = st.selectbox(
+                "Sort by column",
+                options=["[None]"] + df.columns.tolist(),
+                index=0
+            )
+        with col_sort_order:
+            sort_order = st.radio(
+                "Sort direction",
+                options=["Ascending", "Descending"],
+                horizontal=True,
+                disabled=(sort_col == "[None]")
+            )
+
+        col_vis, col_page_size = st.columns([3, 1])
+        with col_vis:
+            visible_cols = st.multiselect(
+                "Columns to display",
+                options=df.columns.tolist(),
+                default=df.columns.tolist(),
+                help="Select columns to show or hide in the grid view."
+            )
+        with col_page_size:
+            page_size = st.selectbox(
+                "Rows per page",
+                options=[10, 25, 50, 100],
+                index=0
+            )
     
     # 1. Apply Search Filter (Case-insensitive across all columns)
     df_filtered = df

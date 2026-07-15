@@ -36,14 +36,13 @@ def render() -> None:
     )
 
     # File uploader workspace styled inside a card
-    st.markdown('<div class="upload-container">', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader(
-        "Choose a data file",
-        type=["csv", "xlsx", "xls"],
-        help="Supported formats: CSV, Excel (.xlsx, .xls). File size limits up to 200MB.",
-        label_visibility="collapsed",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+    with st.container(border=True):
+        uploaded_file = st.file_uploader(
+            "Choose a data file",
+            type=["csv", "xlsx", "xls"],
+            help="Supported formats: CSV, Excel (.xlsx, .xls). File size limits up to 200MB.",
+            label_visibility="collapsed",
+        )
 
     # Process upload if file is provided
     if uploaded_file is not None:
