@@ -42,17 +42,20 @@ def render_metric_card(
 
     detail_html = f'<p class="kpi-detail">{detail}</p>' if detail else ""
 
-    card_html = f"""
-    <div class="kpi-card glass-card" style="margin-bottom: 1rem;">
-        <div class="kpi-top">
-            <div class="kpi-icon-wrap icon-box">
-                {resolved_icon}
+    import textwrap
+    card_html = textwrap.dedent(
+        f"""
+        <div class="kpi-card glass-card" style="margin-bottom: 1rem;">
+            <div class="kpi-top">
+                <div class="kpi-icon-wrap icon-box">
+                    {textwrap.dedent(resolved_icon).strip()}
+                </div>
+                {trend_html}
             </div>
-            {trend_html}
+            <p class="kpi-value">{value}</p>
+            <p class="kpi-label">{label}</p>
+            {detail_html}
         </div>
-        <p class="kpi-value">{value}</p>
-        <p class="kpi-label">{label}</p>
-        {detail_html}
-    </div>
-    """
+        """
+    ).strip()
     st.markdown(card_html, unsafe_allow_html=True)

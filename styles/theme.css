@@ -166,11 +166,11 @@ footer { visibility: hidden; }
 /* ── Hero ─────────────────────────────────────────────── */
 .hero-section {
     position: relative;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid var(--border);
     overflow: hidden;
-    padding: 4rem max(1.5rem, calc((100vw - 1200px) / 2 + 1.25rem)) 5rem;
+    padding: 4rem 2.5rem 5rem;
     margin-bottom: 4rem;
     background:
         radial-gradient(
@@ -1051,77 +1051,302 @@ footer { visibility: hidden; }
     }
 }
 
-/* ── Sidebar Navigation Overrides ────────────────────────── */
+/* ── Sidebar Shell ───────────────────────────────────────── */
 [data-testid="stSidebar"] {
-    background-color: var(--surface) !important;
+    background:
+        radial-gradient(
+            ellipse 110% 70% at 0% 0%,
+            rgba(99, 102, 241, 0.1),
+            transparent 58%
+        ),
+        var(--surface) !important;
     border-right: 1px solid var(--border) !important;
+    transition: min-width 0.2s, max-width 0.2s, width 0.2s, transform 0.2s !important;
+}
+
+/* Expanded state overrides */
+[data-testid="stAppViewContainer"][data-sidebar-state="expanded"] [data-testid="stSidebar"] {
+    min-width: 15rem !important;
+    max-width: 15rem !important;
+}
+
+[data-testid="stAppViewContainer"][data-sidebar-state="expanded"] [data-testid="stSidebar"] > div:first-child {
+    width: 15rem !important;
+    padding: 0.85rem 0.65rem 1rem !important;
+}
+
+/* Collapsed state overrides to allow sidebar to shrink to 0 width */
+[data-testid="stAppViewContainer"][data-sidebar-state="collapsed"] [data-testid="stSidebar"] {
+    min-width: 0 !important;
+    max-width: 0 !important;
+    width: 0 !important;
+    border-right: none !important;
+}
+
+[data-testid="stAppViewContainer"][data-sidebar-state="collapsed"] [data-testid="stSidebar"] > div:first-child {
+    width: 0 !important;
+    padding: 0 !important;
 }
 
 [data-testid="stSidebarNav"] {
-    background-color: transparent !important;
-}
-
-/* Redesign Streamlit radio menu inside sidebar to look like custom navigation nodes */
-[data-testid="stSidebar"] .stRadio > label {
     display: none !important;
 }
 
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h1,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 {
+    margin: 0;
+}
+
+/* ── Sidebar Branding ────────────────────────────────────── */
+.sidebar-brand {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 0.65rem;
-    padding: 0.5rem 0;
+    padding: 0.15rem 0.35rem 0.85rem;
+    margin-bottom: 0.15rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
-    position: relative !important;
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 12px !important;
-    color: var(--subtext) !important;
-    transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+.sidebar-brand-mark {
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.22), rgba(34, 211, 238, 0.1));
+    border: 1px solid rgba(124, 58, 237, 0.28);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.14);
+    flex-shrink: 0;
+}
+
+.sidebar-brand-mark svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    stroke: #fafafa;
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sidebar-brand-name {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.15;
+}
+
+.sidebar-brand-name span {
+    background: linear-gradient(135deg, #8b5cf6 0%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.sidebar-brand-tagline {
+    margin: 0.1rem 0 0;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #52525b;
+}
+
+/* ── Sidebar Pill Navigation (Uiverse-inspired) ──────────── */
+.nav-pill-seed {
+    display: none !important;
+}
+
+.sidebar-nav-section-label {
+    margin: 0.55rem 0 0.28rem;
+    padding: 0 0.65rem;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #3f3f46;
+}
+
+.sidebar-nav-section-label:first-of-type {
+    margin-top: 0.1rem;
+}
+
+.sidebar-nav-spacer {
+    height: 0.35rem;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] {
+    margin-bottom: 0.22rem !important;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] [data-testid="stButton"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button {
+    position: relative;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
     width: 100% !important;
-    cursor: pointer !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-}
-
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover {
-    background: rgba(124, 58, 237, 0.06) !important;
-    border-color: rgba(124, 58, 237, 0.25) !important;
-    color: var(--text) !important;
-}
-
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label[data-checked="true"] {
-    background: linear-gradient(90deg, rgba(124, 58, 237, 0.16), rgba(34, 211, 238, 0.04)) !important;
-    border-color: var(--primary) !important;
-    color: var(--text) !important;
-    box-shadow: 
-        0 0 0 1px rgba(124, 58, 237, 0.15) inset,
-        0 8px 24px rgba(124, 58, 237, 0.12) !important;
-    font-weight: 600 !important;
-}
-
-/* Hide radio circle inputs */
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label span[data-testid="stWidgetLabel"] {
-    font-size: 0.85rem !important;
+    min-height: 2.05rem !important;
+    height: auto !important;
+    padding: 0.42rem 0.85rem 0.42rem 2.15rem !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    background: rgba(255, 255, 255, 0.025) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #71717a !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 0.76rem !important;
     font-weight: 500 !important;
-}
-
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {
-    margin: 0 !important;
-    font-size: 0.85rem !important;
-}
-
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] input[type="radio"] {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    opacity: 0 !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.2 !important;
     cursor: pointer !important;
-    z-index: 2 !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    transition:
+        color 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.15s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button::before {
+    content: "";
+    position: absolute;
+    left: 0.72rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.95rem;
+    height: 0.95rem;
+    background-color: #71717a;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    transition:
+        background-color 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 2;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(99, 102, 241, 0.38) 0%,
+        rgba(124, 58, 237, 0.16) 42%,
+        transparent 72%
+    );
+    opacity: 0;
+    transform: scale(0.82);
+    transition:
+        opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button p {
+    position: relative;
+    z-index: 2;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    color: inherit !important;
+    line-height: inherit !important;
+    text-align: left !important;
+    transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button:hover {
+    color: #f4f4f5 !important;
+    border-color: rgba(139, 92, 246, 0.42) !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+    box-shadow:
+        0 0 0 1px rgba(139, 92, 246, 0.12) inset,
+        0 0 22px rgba(99, 102, 241, 0.28),
+        0 0 44px rgba(124, 58, 237, 0.12) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button:hover::before {
+    background-color: #c4b5fd;
+    transform: translateY(-50%) scale(1.06);
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button:hover::after {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button:active {
+    transform: scale(0.97) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed) + [data-testid="element-container"] button:focus-visible {
+    outline: 2px solid rgba(139, 92, 246, 0.75) !important;
+    outline-offset: 2px !important;
+}
+
+/* Active pill */
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed[data-active="true"]) + [data-testid="element-container"] button {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    background: linear-gradient(135deg, #7c3aed 0%, #6366f1 52%, #0891b2 100%) !important;
+    box-shadow:
+        inset 3px 0 0 0 rgba(255, 255, 255, 0.92),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 0 26px rgba(99, 102, 241, 0.48),
+        0 0 52px rgba(124, 58, 237, 0.22) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed[data-active="true"]) + [data-testid="element-container"] button::before {
+    background-color: #ffffff;
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed[data-active="true"]) + [data-testid="element-container"] button::after {
+    opacity: 0.55;
+    transform: scale(1.05);
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.06) 45%,
+        transparent 72%
+    );
+}
+
+[data-testid="stSidebar"] [data-testid="element-container"]:has(.nav-pill-seed[data-active="true"]) + [data-testid="element-container"] button:hover {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.28) !important;
+    box-shadow:
+        inset 3px 0 0 0 #ffffff,
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+        0 0 32px rgba(99, 102, 241, 0.58),
+        0 0 64px rgba(124, 58, 237, 0.28) !important;
 }
 
 /* ── Bordered workspace panels (glass card containers) ─── */

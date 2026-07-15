@@ -130,14 +130,17 @@ def render_dataset_explorer(df: pd.DataFrame) -> None:
                 st.session_state["exp_page"] -= 1
                 st.rerun()
         with col_nav_info:
+            import textwrap
             st.markdown(
-                f"""
-                <div style="text-align: center; color: var(--subtext); font-size: 0.88rem; padding-top: 0.4rem;">
-                    Page <strong>{current_page + 1}</strong> of <strong>{total_pages}</strong> 
-                    <span style="margin-left: 10px; color: rgba(255,255,255,0.35);">|</span> 
-                    Showing {start_row + 1}-{end_row} of {total_records:,} rows
-                </div>
-                """,
+                textwrap.dedent(
+                    f"""
+                    <div style="text-align: center; color: var(--subtext); font-size: 0.88rem; padding-top: 0.4rem;">
+                        Page <strong>{current_page + 1}</strong> of <strong>{total_pages}</strong> 
+                        <span style="margin-left: 10px; color: rgba(255,255,255,0.35);">|</span> 
+                        Showing {start_row + 1}-{end_row} of {total_records:,} rows
+                    </div>
+                    """
+                ).strip(),
                 unsafe_allow_html=True
             )
         with col_nav_next:

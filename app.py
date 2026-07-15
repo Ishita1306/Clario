@@ -483,31 +483,33 @@ def render_footer():
 def render_placeholder(title: str, badge: str = "Upcoming Feature") -> None:
     """Render a premium placeholder card for features in development."""
     inject_styles()
+    import textwrap
     st.markdown(
-        f"""
-        <div class="coming-soon-card glass-card">
-            <span class="coming-soon-tag">{badge}</span>
-            <div class="coming-soon-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="16" x2="12" y2="12"/>
-                    <line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
+        textwrap.dedent(
+            f"""
+            <div class="coming-soon-card glass-card">
+                <span class="coming-soon-tag">{badge}</span>
+                <div class="coming-soon-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                </div>
+                <h2 style="margin: 0 0 1rem; font-size: 1.75rem; font-weight: 800; color: var(--text);">{title} Workspace</h2>
+                <p style="margin: 0 auto; max-width: 420px; font-size: 0.95rem; line-height: 1.6; color: var(--subtext);">
+                    This space is reserved for Phase 3 advanced extensions. 
+                    InsightFlow AI will connect specialized intelligence models to automate deep business recommendations here.
+                </p>
             </div>
-            <h2 style="margin: 0 0 1rem; font-size: 1.75rem; font-weight: 800; color: var(--text);">{title} Workspace</h2>
-            <p style="margin: 0 auto; max-width: 420px; font-size: 0.95rem; line-height: 1.6; color: var(--subtext);">
-                This space is reserved for Phase 3 advanced extensions. 
-                InsightFlow AI will connect specialized intelligence models to automate deep business recommendations here.
-            </p>
-        </div>
-        """,
+            """
+        ).strip(),
         unsafe_allow_html=True
     )
 
 
 def render_landing_page():
     """Assemble and display the full landing page."""
-    inject_styles()
     render_hero()
     render_kpi_stats()
     render_workflow()
@@ -519,95 +521,39 @@ def render_landing_page():
 def main():
     """Bootstrap the application."""
     configure_page()
-    
-    # Initialize page state
+    inject_styles()
+
+    from components.sidebar_nav import render_sidebar_branding, render_sidebar_navigation
+
     if "current_page" not in st.session_state:
         st.session_state["current_page"] = "landing"
 
-    # Sidebar branding
-    st.sidebar.markdown(
-        """
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <h3 style="color: #FAFAFA; font-weight: 800; margin: 0; font-family: 'Inter', sans-serif;">
-                InsightFlow <span style="background: linear-gradient(135deg, #8B5CF6 0%, #22D3EE 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">AI</span>
-            </h3>
-            <p style="color: #A1A1AA; font-size: 0.75rem; margin-top: 0.25rem; font-family: 'Inter', sans-serif;">Enterprise BI Platform</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    render_sidebar_branding()
+    render_sidebar_navigation(st.session_state["current_page"])
 
-    # Sidebar navigation options
-    navigation_options = [
-        "Home Page",
-        "Dashboard",
-        "Upload",
-        "Overview",
-        "Visual Analytics",
-        "AI Insights (placeholder)",
-        "Forecasting (placeholder)",
-        "Reports (placeholder)",
-        "Settings"
-    ]
+    current_page = st.session_state["current_page"]
 
-    page_map = {
-        "Home Page": "landing",
-        "Dashboard": "dashboard",
-        "Upload": "upload",
-        "Overview": "overview",
-        "Visual Analytics": "visual_analytics",
-        "AI Insights (placeholder)": "ai_insights",
-        "Forecasting (placeholder)": "forecasting",
-        "Reports (placeholder)": "reports",
-        "Settings": "settings"
-    }
-
-    reverse_map = {v: k for k, v in page_map.items()}
-
-    # Keep sidebar radio and session page in sync (supports programmatic navigation)
-    if "nav_selection" not in st.session_state:
-        st.session_state["nav_selection"] = reverse_map.get(
-            st.session_state["current_page"], "Home Page"
-        )
-
-    expected_nav = reverse_map.get(st.session_state["current_page"], "Home Page")
-    if st.session_state["nav_selection"] != expected_nav:
-        st.session_state["nav_selection"] = expected_nav
-
-    selected_page = st.sidebar.radio(
-        "Navigation",
-        options=navigation_options,
-        key="nav_selection",
-        label_visibility="collapsed",
-    )
-    st.session_state["current_page"] = page_map[selected_page]
-
-    # Conditionally render the appropriate page
-    if st.session_state["current_page"] == "landing":
+    if current_page == "landing":
         render_landing_page()
-    elif st.session_state["current_page"] == "dashboard":
-        inject_styles()
+    elif current_page == "dashboard":
         from pages import dashboard
         dashboard.render()
-    elif st.session_state["current_page"] == "upload":
-        inject_styles()
+    elif current_page == "upload":
         from pages import upload
         upload.render()
-    elif st.session_state["current_page"] == "overview":
-        inject_styles()
+    elif current_page == "overview":
         from pages import overview
         overview.render()
-    elif st.session_state["current_page"] == "visual_analytics":
-        inject_styles()
+    elif current_page == "visual_analytics":
         from pages import visual_analytics
         visual_analytics.render()
-    elif st.session_state["current_page"] == "ai_insights":
+    elif current_page == "ai_insights":
         render_placeholder("AI Insights")
-    elif st.session_state["current_page"] == "forecasting":
+    elif current_page == "forecasting":
         render_placeholder("Forecasting")
-    elif st.session_state["current_page"] == "reports":
+    elif current_page == "reports":
         render_placeholder("Reports")
-    elif st.session_state["current_page"] == "settings":
+    elif current_page == "settings":
         render_placeholder("Settings", badge="Configuration")
 
 

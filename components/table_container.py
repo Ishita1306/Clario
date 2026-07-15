@@ -20,52 +20,55 @@ def render_table_container(
         max_height_px (int): Vertical height cap for scrollbar.
         index (bool): Show dataframe index column.
     """
-    table_css = """
-    <style>
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(24, 24, 27, 0.45);
-            margin: 1rem 0 2rem;
-        }
-        .premium-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            color: #FAFAFA;
-            text-align: left;
-        }
-        .premium-table th {
-            background: #18181B;
-            padding: 0.85rem 1.15rem;
-            font-weight: 600;
-            font-size: 0.78rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: #A1A1AA;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .premium-table td {
-            padding: 0.85rem 1.15rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 250px;
-        }
-        .premium-table tbody tr:hover {
-            background: rgba(124, 58, 237, 0.04);
-        }
-        .premium-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-    </style>
-    """
+    import textwrap
+    table_css = textwrap.dedent(
+        """
+        <style>
+            .table-wrapper {
+                width: 100%;
+                overflow-x: auto;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                background: rgba(24, 24, 27, 0.45);
+                margin: 1rem 0 2rem;
+            }
+            .premium-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.85rem;
+                color: #FAFAFA;
+                text-align: left;
+            }
+            .premium-table th {
+                background: #18181B;
+                padding: 0.85rem 1.15rem;
+                font-weight: 600;
+                font-size: 0.78rem;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                color: #A1A1AA;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+            .premium-table td {
+                padding: 0.85rem 1.15rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 250px;
+            }
+            .premium-table tbody tr:hover {
+                background: rgba(124, 58, 237, 0.04);
+            }
+            .premium-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+        </style>
+        """
+    ).strip()
     st.markdown(table_css, unsafe_allow_html=True)
 
     # Convert DataFrame to premium styled HTML
@@ -76,9 +79,11 @@ def render_table_container(
         border=0,
     )
 
-    scrollable_container = f"""
-    <div class="table-wrapper" style="max-height: {max_height_px}px;">
-        {html_table}
-    </div>
-    """
+    scrollable_container = textwrap.dedent(
+        f"""
+        <div class="table-wrapper" style="max-height: {max_height_px}px;">
+            {html_table}
+        </div>
+        """
+    ).strip()
     st.markdown(scrollable_container, unsafe_allow_html=True)

@@ -131,13 +131,16 @@ def render() -> None:
             # Show record counts
             total_rows = len(df)
             filtered_rows = len(filtered_df)
+            import textwrap
             st.markdown(
-                f"""
-                <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(34, 211, 238, 0.04); border: 1px solid rgba(34, 211, 238, 0.12); text-align: center;">
-                    <span style="font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em;">Rows Filtered</span>
-                    <p style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--accent);">{filtered_rows:,} / {total_rows:,}</p>
-                </div>
-                """,
+                textwrap.dedent(
+                    f"""
+                    <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(34, 211, 238, 0.04); border: 1px solid rgba(34, 211, 238, 0.12); text-align: center;">
+                        <span style="font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em;">Rows Filtered</span>
+                        <p style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--accent);">{filtered_rows:,} / {total_rows:,}</p>
+                    </div>
+                    """
+                ).strip(),
                 unsafe_allow_html=True
             )
 

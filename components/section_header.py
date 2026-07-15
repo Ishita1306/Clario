@@ -30,11 +30,14 @@ def render_section_header(
         f'<p class="section-subtitle">{subtitle}</p>' if subtitle else ""
     )
 
-    header_html = f"""
-    <div class="section-header {align_class}" style="margin-bottom: 2rem; margin-top: 1.5rem;">
-        {label_html}
-        <h2 class="section-title" style="margin-top: 0.5rem; font-size: 1.8rem; font-weight: 800;">{title}</h2>
-        {subtitle_html}
-    </div>
-    """
+    import textwrap
+    header_html = textwrap.dedent(
+        f"""
+        <div class="section-header {align_class}" style="margin-bottom: 2rem; margin-top: 1.5rem;">
+            {label_html}
+            <h2 class="section-title" style="margin-top: 0.5rem; font-size: 1.8rem; font-weight: 800;">{title}</h2>
+            {subtitle_html}
+        </div>
+        """
+    ).strip()
     st.markdown(header_html, unsafe_allow_html=True)
