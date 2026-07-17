@@ -376,7 +376,7 @@ def render() -> None:
                     data=excel_bytes,
                     file_name=f"clario_briefing_{filename.split('.')[0]}.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
+                    width="stretch",
                     key="btn_exp_xlsx"
                 )
             with col_btn2:
@@ -386,7 +386,7 @@ def render() -> None:
                     data=pdf_bytes,
                     file_name=f"clario_report_{filename.split('.')[0]}.pdf",
                     mime="application/pdf",
-                    use_container_width=True,
+                    width="stretch",
                     key="btn_exp_pdf"
                 )
             with col_btn3:
@@ -396,7 +396,7 @@ def render() -> None:
                     data=ppt_bytes,
                     file_name=f"clario_presentation_{filename.split('.')[0]}.pptx",
                     mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    use_container_width=True,
+                    width="stretch",
                     key="btn_exp_pptx"
                 )
 
@@ -528,7 +528,7 @@ def render() -> None:
             )
             from pages.overview import apply_plotly_theme
             apply_plotly_theme(fig_missing)
-            st.plotly_chart(fig_missing, use_container_width=True, key="fig_comp")
+            st.plotly_chart(fig_missing, width="stretch", key="fig_comp")
 
     with col_chart2:
         with st.container(border=True):
@@ -560,7 +560,7 @@ def render() -> None:
                 margin=dict(l=10, r=10, t=30, b=10)
             )
             apply_plotly_theme(fig_types)
-            st.plotly_chart(fig_types, use_container_width=True, key="fig_types")
+            st.plotly_chart(fig_types, width="stretch", key="fig_types")
 
     with col_chart3:
         with st.container(border=True):
@@ -584,7 +584,7 @@ def render() -> None:
                 yaxis=dict(autorange="reversed")
             )
             apply_plotly_theme(fig_dist)
-            st.plotly_chart(fig_dist, use_container_width=True, key="fig_card")
+            st.plotly_chart(fig_dist, width="stretch", key="fig_card")
 
     # 4. Row 4: Data Cleaning Summary & AI Business Recommendations
     col_clean, col_rec = st.columns([1, 1.3])

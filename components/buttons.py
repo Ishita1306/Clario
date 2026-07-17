@@ -12,7 +12,7 @@ def primary_button(
     on_click: Optional[Callable] = None,
     args: Optional[tuple] = None,
     kwargs: Optional[dict] = None,
-    use_container_width: bool = False,
+    width: str = "content",
     disabled: bool = False,
 ) -> bool:
     """Render a styled primary button."""
@@ -24,7 +24,7 @@ def primary_button(
         on_click=on_click,
         args=args,
         kwargs=kwargs,
-        use_container_width=use_container_width,
+        width=width,
         disabled=disabled,
     )
 
@@ -35,7 +35,7 @@ def secondary_button(
     on_click: Optional[Callable] = None,
     args: Optional[tuple] = None,
     kwargs: Optional[dict] = None,
-    use_container_width: bool = False,
+    width: str = "content",
     disabled: bool = False,
 ) -> bool:
     """Render a styled secondary button."""
@@ -47,7 +47,7 @@ def secondary_button(
         on_click=on_click,
         args=args,
         kwargs=kwargs,
-        use_container_width=use_container_width,
+        width=width,
         disabled=disabled,
     )
 
@@ -58,7 +58,7 @@ def danger_button(
     on_click: Optional[Callable] = None,
     args: Optional[tuple] = None,
     kwargs: Optional[dict] = None,
-    use_container_width: bool = False,
+    width: str = "content",
     disabled: bool = False,
 ) -> bool:
     """Render a styled danger button."""
@@ -70,6 +70,6 @@ def danger_button(
         on_click=on_click,
         args=args,
         kwargs=kwargs,
-        use_container_width=use_container_width,
+        width=width,
         disabled=disabled,
     )

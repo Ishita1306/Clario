@@ -78,7 +78,7 @@ def convert_datatypes(
     new_df = df.copy()
 
     if datatype == "datetime":
-        new_df[column] = pd.to_datetime(new_df[column], errors="coerce")
+        new_df[column] = pd.to_datetime(new_df[column], errors="coerce", format="mixed")
     elif datatype in {"int64", "float64"}:
         new_df[column] = pd.to_numeric(new_df[column], errors="coerce")
         new_df[column] = new_df[column].astype(datatype)
@@ -192,7 +192,7 @@ def auto_detect_datatypes(df: pd.DataFrame) -> Dict[str, str]:
         # 2. Try Datetime detection (using a sample of first 15 values for speed)
         try:
             sample = col_series.head(15)
-            pd.to_datetime(sample, errors="raise")
+            pd.to_datetime(sample, errors="raise", format="mixed")
             detected[col] = "datetime64[ns]"
             continue
         except (ValueError, TypeError):

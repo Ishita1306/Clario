@@ -68,13 +68,13 @@ def render() -> None:
         
         col_actions = st.columns(2)
         with col_actions[0]:
-            if st.button("Clear Workspace", type="primary", use_container_width=True):
+            if st.button("Clear Workspace", type="primary", width="stretch"):
                 from utils.workspace_manager import clear_workspace
                 clear_workspace()
                 st.success("Workspace securely cleared!")
                 st.rerun()
         with col_actions[1]:
-            if st.button("Sign Out", type="secondary", use_container_width=True):
+            if st.button("Sign Out", type="secondary", width="stretch"):
                 from utils.workspace_manager import clear_workspace
                 clear_workspace()
                 st.session_state["authenticated"] = False

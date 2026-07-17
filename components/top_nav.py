@@ -69,19 +69,19 @@ def render_top_nav() -> None:
                 f'<span class="top-nav-marker" data-type="theme-toggle" data-theme="{current_theme}"></span>',
                 unsafe_allow_html=True,
             )
-            if st.button("", key="top_nav_theme", use_container_width=True):
+            if st.button("", key="top_nav_theme", width="stretch"):
                 st.session_state["theme"] = "light" if current_theme == "dark" else "dark"
                 st.rerun()
 
         with sub_cols[2]:
             # Notifications Icon
             st.markdown('<span class="top-nav-marker" data-type="notifications"></span>', unsafe_allow_html=True)
-            if st.button("", key="top_nav_notifications", use_container_width=True):
+            if st.button("", key="top_nav_notifications", width="stretch"):
                 st.toast("No new alerts. All systems operational.")
 
         with sub_cols[3]:
             # User Profile Avatar Icon (navigates to settings page)
             st.markdown('<span class="top-nav-marker" data-type="avatar"></span>', unsafe_allow_html=True)
-            if st.button("", key="top_nav_avatar", use_container_width=True):
+            if st.button("", key="top_nav_avatar", width="stretch"):
                 st.session_state["current_page"] = "settings"
                 st.rerun()

@@ -202,7 +202,7 @@ def _render_nav_pill(item: NavItem, *, is_active: bool) -> None:
     if st.sidebar.button(
         item.title,
         key=f"sidebar_nav_{item.key}",
-        use_container_width=True,
+        width="stretch",
         type="secondary",
         help=item.description,
     ):
@@ -237,7 +237,7 @@ def render_sidebar_navigation(current_page: str) -> None:
     # Render a clean divider and Sign Out button at the bottom
     st.sidebar.markdown('<div class="sidebar-nav-spacer" style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem;"></div>', unsafe_allow_html=True)
     st.sidebar.markdown('<span class="nav-pill-seed" data-nav="signout" data-active="false"></span>', unsafe_allow_html=True)
-    if st.sidebar.button("Sign Out", key="sidebar_signout", use_container_width=True):
+    if st.sidebar.button("Sign Out", key="sidebar_signout", width="stretch"):
         from utils.workspace_manager import clear_workspace
         clear_workspace()
         st.session_state["authenticated"] = False

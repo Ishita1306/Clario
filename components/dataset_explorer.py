@@ -126,7 +126,7 @@ def render_dataset_explorer(df: pd.DataFrame) -> None:
         # Pagination controls
         col_nav_prev, col_nav_info, col_nav_next = st.columns([1, 2, 1])
         with col_nav_prev:
-            if st.button("Previous Page", disabled=(current_page == 0), use_container_width=True):
+            if st.button("Previous Page", disabled=(current_page == 0), width="stretch"):
                 st.session_state["exp_page"] -= 1
                 st.rerun()
         with col_nav_info:
@@ -144,7 +144,7 @@ def render_dataset_explorer(df: pd.DataFrame) -> None:
                 unsafe_allow_html=True
             )
         with col_nav_next:
-            if st.button("Next Page", disabled=(current_page >= total_pages - 1), use_container_width=True):
+            if st.button("Next Page", disabled=(current_page >= total_pages - 1), width="stretch"):
                 st.session_state["exp_page"] += 1
                 st.rerun()
                 
@@ -159,7 +159,7 @@ def render_dataset_explorer(df: pd.DataFrame) -> None:
             data=csv_data,
             file_name="clario_filtered_dataset.csv",
             mime="text/csv",
-            use_container_width=True,
+            width="stretch",
             type="primary"
         )
     else:

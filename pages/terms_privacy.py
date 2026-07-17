@@ -159,6 +159,6 @@ def render() -> None:
         )
         st.session_state["terms_accepted"] = terms_accepted
 
-        if st.button("Continue", type="primary", use_container_width=True, disabled=not terms_accepted):
+        if st.button("Continue", type="primary", width="stretch", disabled=not terms_accepted):
             st.session_state["show_terms"] = False
             st.rerun()

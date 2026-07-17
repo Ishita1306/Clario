@@ -57,7 +57,7 @@ def render_empty_state(
     if action_label:
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            clicked = st.button(action_label, use_container_width=True, type="primary")
+            clicked = st.button(action_label, width="stretch", type="primary")
             if clicked and navigate_to:
                 st.session_state["current_page"] = navigate_to
                 st.rerun()

@@ -175,7 +175,7 @@ def render() -> None:
                     data=csv_bytes,
                     file_name=f"clario_forecast_{target_var}.csv",
                     mime="text/csv",
-                    use_container_width=True
+                    width="stretch"
                 )
             else:
                 st.error("Failed to compute forecast. Ensure the selected variables contain valid rows.")
@@ -425,7 +425,7 @@ def render() -> None:
                 margin=dict(l=30, r=30, t=60, b=30)
             )
             
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
             
             # 3. Row 3: Forecast Insights (Left) & Forecast Statistics (Right)
             col_insight, col_stats = st.columns([1.2, 1])

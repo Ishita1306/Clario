@@ -141,7 +141,7 @@ def render() -> None:
 
         # Wrap filters inside glass card
         with glass_card_panel():
-            if st.button("Reset Filters", type="secondary", use_container_width=True, key="reset_filters_btn"):
+            if st.button("Reset Filters", type="secondary", width="stretch", key="reset_filters_btn"):
                 st.session_state["act_num"] = []
                 st.session_state["act_cat"] = []
                 st.session_state["act_date"] = []
@@ -450,7 +450,7 @@ def render() -> None:
 
         if fig is not None:
             fig.update_layout(height=480)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
             
             # AI Insights Card
             st.markdown('<div class="va-insight-card">', unsafe_allow_html=True)

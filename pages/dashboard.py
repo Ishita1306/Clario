@@ -171,13 +171,13 @@ def render() -> None:
         # 2. Quick Actions Card
         with glass_card_panel():
             st.markdown('<p style="font-size: 0.85rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 0.75rem;">Quick Actions</p>', unsafe_allow_html=True)
-            if st.button("Clean Dataset", use_container_width=True, key="dash_btn_clean"):
+            if st.button("Clean Dataset", width="stretch", key="dash_btn_clean"):
                 st.session_state["current_page"] = "upload"
                 st.rerun()
-            if st.button("Visual Analytics", use_container_width=True, key="dash_btn_visual"):
+            if st.button("Visual Analytics", width="stretch", key="dash_btn_visual"):
                 st.session_state["current_page"] = "visual_analytics"
                 st.rerun()
-            if st.button("Insight AI", use_container_width=True, key="dash_btn_ai"):
+            if st.button("Insight AI", width="stretch", key="dash_btn_ai"):
                 st.session_state["current_page"] = "ai_insights"
                 st.rerun()
 

@@ -587,7 +587,7 @@ def render() -> None:
         with col_title:
             st.markdown(f'<h3 style="font-weight: 700; color: var(--text); margin-top: 0.5rem; margin-bottom: 1.5rem;">Active Dataset: <span style="color: var(--primary);">{filename}</span></h3>', unsafe_allow_html=True)
         with col_clear:
-            if st.button("Clear Workspace", key="upload_clear_workspace", type="secondary", use_container_width=True):
+            if st.button("Clear Workspace", key="upload_clear_workspace", type="secondary", width="stretch"):
                 from utils.workspace_manager import clear_workspace
                 clear_workspace()
                 st.rerun()
@@ -934,7 +934,7 @@ def render() -> None:
 
             st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
             
-            if st.button("Clean Dataset", type="primary", use_container_width=True):
+            if st.button("Clean Dataset", type="primary", width="stretch"):
                 work_df = orig_df.copy()
                 detailed_changes = []
                 

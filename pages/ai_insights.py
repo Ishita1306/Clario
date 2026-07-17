@@ -631,22 +631,22 @@ def render() -> None:
         st.markdown('<p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 0.75rem;">Workspace Actions</p>', unsafe_allow_html=True)
         
         with glass_card_panel():
-            if st.button("Summarize Dataset", use_container_width=True, key="prompt_btn_summary"):
+            if st.button("Summarize Dataset", width="stretch", key="prompt_btn_summary"):
                 trigger_preset_prompt("Summarize dataset")
                 st.rerun()
-            if st.button("Explain Charts", use_container_width=True, key="prompt_btn_charts"):
+            if st.button("Explain Charts", width="stretch", key="prompt_btn_charts"):
                 trigger_preset_prompt("Explain charts")
                 st.rerun()
-            if st.button("Detect Anomalies", use_container_width=True, key="prompt_btn_anomalies"):
+            if st.button("Detect Anomalies", width="stretch", key="prompt_btn_anomalies"):
                 trigger_preset_prompt("Detect anomalies")
                 st.rerun()
-            if st.button("Business Recommendations", use_container_width=True, key="prompt_btn_recs"):
+            if st.button("Business Recommendations", width="stretch", key="prompt_btn_recs"):
                 trigger_preset_prompt("Business recommendations")
                 st.rerun()
-            if st.button("Predict Trends", use_container_width=True, key="prompt_btn_predict"):
+            if st.button("Predict Trends", width="stretch", key="prompt_btn_predict"):
                 trigger_preset_prompt("Predict trends")
                 st.rerun()
-            if st.button("Generate Insights", use_container_width=True, key="prompt_btn_insights"):
+            if st.button("Generate Insights", width="stretch", key="prompt_btn_insights"):
                 trigger_preset_prompt("Generate insights")
                 st.rerun()
 
@@ -668,7 +668,7 @@ def render() -> None:
             for i, q_text in enumerate(sugs):
                 with cols[i]:
                     btn_label = q_text if len(q_text) < 32 else q_text[:30] + "..."
-                    if st.button(btn_label, key=f"sug_btn_{i}", use_container_width=True):
+                    if st.button(btn_label, key=f"sug_btn_{i}", width="stretch"):
                         st.session_state["ai_messages"].append({"role": "user", "content": q_text})
                         response_content = generate_conversational_response(q_text, df, filename)
                         st.session_state["ai_messages"].append({"role": "assistant", "content": response_content})

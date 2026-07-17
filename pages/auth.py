@@ -85,7 +85,7 @@ def render() -> None:
             )
             st.session_state["terms_accepted"] = terms_accepted
             
-            if st.button("Read Terms of Service", type="secondary", use_container_width=True, key="read_terms_signin"):
+            if st.button("Read Terms of Service", type="secondary", width="stretch", key="read_terms_signin"):
                 st.session_state["show_terms"] = True
                 st.rerun()
 
@@ -95,7 +95,7 @@ def render() -> None:
             is_locked = st.session_state["login_locked"]
             submit_disabled = is_locked or not st.session_state.get("terms_accepted", False)
             
-            if st.button("Sign In", use_container_width=True, type="primary", disabled=submit_disabled):
+            if st.button("Sign In", width="stretch", type="primary", disabled=submit_disabled):
                 if not email or not password:
                     st.error("Please fill in all credentials.")
                 else:
@@ -119,7 +119,7 @@ def render() -> None:
                         else:
                             st.error(f"Invalid email or password. Please verify your credentials. ({attempts_left} attempts remaining)")
             st.markdown('<div class="auth-divider"></div>', unsafe_allow_html=True)
-            if st.button("Don't have an account? Sign Up", use_container_width=True):
+            if st.button("Don't have an account? Sign Up", width="stretch"):
                 st.session_state["auth_mode"] = "signup"
                 st.rerun()
                 
@@ -143,13 +143,13 @@ def render() -> None:
             )
             st.session_state["terms_accepted"] = terms_accepted
             
-            if st.button("Read Terms of Service", type="secondary", use_container_width=True, key="read_terms_signup"):
+            if st.button("Read Terms of Service", type="secondary", width="stretch", key="read_terms_signup"):
                 st.session_state["show_terms"] = True
                 st.rerun()
 
             st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
             
-            if st.button("Sign Up", use_container_width=True, type="primary", disabled=not st.session_state.get("terms_accepted", False)):
+            if st.button("Sign Up", width="stretch", type="primary", disabled=not st.session_state.get("terms_accepted", False)):
                 if not name or not email or not password or not confirm_password:
                     st.error("Please fill in all fields.")
                 elif not validate_email(email):
@@ -175,6 +175,6 @@ def render() -> None:
                             st.error(msg)
                     
             st.markdown('<div class="auth-divider"></div>', unsafe_allow_html=True)
-            if st.button("Already have an account? Sign In", use_container_width=True):
+            if st.button("Already have an account? Sign In", width="stretch"):
                 st.session_state["auth_mode"] = "signin"
                 st.rerun()

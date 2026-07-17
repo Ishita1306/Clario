@@ -399,7 +399,7 @@ def render() -> None:
                 )
                 apply_plotly_theme(fig_types)
                 fig_types.update_layout(height=340, margin=dict(l=20, r=20, t=50, b=20))
-                st.plotly_chart(fig_types, use_container_width=True, key="donut_types")
+                st.plotly_chart(fig_types, width="stretch", key="donut_types")
             else:
                 st.info("No columns available to plot data types.")
                 
@@ -426,7 +426,7 @@ def render() -> None:
                     )
                     apply_plotly_theme(fig_missing)
                     fig_missing.update_layout(height=340, yaxis=dict(autorange="reversed"), margin=dict(l=20, r=20, t=50, b=20))
-                    st.plotly_chart(fig_missing, use_container_width=True, key="bar_missing")
+                    st.plotly_chart(fig_missing, width="stretch", key="bar_missing")
                 else:
                     # Render complete message
                     fig_complete = go.Figure(
@@ -445,7 +445,7 @@ def render() -> None:
                     )
                     apply_plotly_theme(fig_complete)
                     fig_complete.update_layout(height=340, margin=dict(l=20, r=20, t=50, b=20))
-                    st.plotly_chart(fig_complete, use_container_width=True, key="indicator_complete")
+                    st.plotly_chart(fig_complete, width="stretch", key="indicator_complete")
             else:
                 st.info("No missing values profile data found.")
 
@@ -468,7 +468,7 @@ def render() -> None:
                 )
                 apply_plotly_theme(fig_dist)
                 fig_dist.update_layout(height=340, margin=dict(l=20, r=20, t=50, b=20))
-                st.plotly_chart(fig_dist, use_container_width=True, key="hist_num")
+                st.plotly_chart(fig_dist, width="stretch", key="hist_num")
                 
         with chart_row2_c2:
             with st.container(border=True):
@@ -480,7 +480,7 @@ def render() -> None:
                 )
                 apply_plotly_theme(fig_box)
                 fig_box.update_layout(height=340, margin=dict(l=20, r=20, t=50, b=20))
-                st.plotly_chart(fig_box, use_container_width=True, key="box_num")
+                st.plotly_chart(fig_box, width="stretch", key="box_num")
     else:
         st.info("No numerical features found for distributions.")
 
@@ -511,7 +511,7 @@ def render() -> None:
                 )
                 apply_plotly_theme(fig_freq)
                 fig_freq.update_layout(yaxis=dict(autorange="reversed"), height=340, margin=dict(l=20, r=20, t=50, b=20))
-                st.plotly_chart(fig_freq, use_container_width=True, key="bar_freq")
+                st.plotly_chart(fig_freq, width="stretch", key="bar_freq")
             else:
                 st.info("No categorical features found for frequencies.")
                 
@@ -535,7 +535,7 @@ def render() -> None:
                 )
                 apply_plotly_theme(fig_heat)
                 fig_heat.update_layout(height=340, margin=dict(l=20, r=20, t=50, b=20))
-                st.plotly_chart(fig_heat, use_container_width=True, key="heatmap_corr")
+                st.plotly_chart(fig_heat, width="stretch", key="heatmap_corr")
             elif len(numeric_df.columns) == 1:
                 st.info("Correlation matrix requires at least two numerical columns. Only one numerical column detected.")
             else:
