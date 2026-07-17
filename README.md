@@ -46,18 +46,32 @@ You can access the deployed application here:
 
 ---
 
-# 📸 Screenshots
+## 📸 Screenshots
 
-> Screenshots will be added soon.
+### Landing Page
 
-Recommended screenshots:
+![Landing Page](assets/screenshots/landing.png)
 
-* Landing Page
-* Login / Sign Up
-* Dataset Upload
-* Dashboard
-* AI Insight Panel
-* Reports
+### Login
+
+![Login](assets/screenshots/login.png)
+
+### Upload Dataset
+
+![Upload](assets/screenshots/upload.png)
+
+### Dashboard
+
+![Dashboard](assets/screenshots/dashboard.png)
+
+### AI Insights
+
+![AI Panel](assets/screenshots/ai-panel.png)
+
+### Reports
+
+![Reports](assets/screenshots/reports.png)
+
 
 ---
 
