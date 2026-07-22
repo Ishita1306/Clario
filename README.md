@@ -1,10 +1,10 @@
 # 🚀 Kosvio
 
-> **Human-Centered Business Intelligence Platform**
+> **Human-Centered Business Intelligence & AI Analytics Platform**
 
-Kosvio is an end-to-end Business Intelligence platform that enables users to upload datasets, clean and analyze data, build interactive dashboards, generate AI-powered insights, and create executive-ready reports—all through an intuitive web interface.
+Kosvio is an end-to-end Business Intelligence platform that helps users transform raw business data into meaningful insights. Users can upload datasets, documents, and reports, automatically analyze information, generate AI-powered insights, build interactive dashboards, and create executive-ready reports through an intuitive web interface.
 
-🌐 **Live Demo:** https://kosvio.streamlit.app/
+🌐 **Live Demo:** https://kosvio-ai-e9e6dncchahjb4ax.centralindia-01.azurewebsites.net/
 
 ---
 
@@ -12,10 +12,12 @@ Kosvio is an end-to-end Business Intelligence platform that enables users to upl
 
 * 🔐 Secure User Authentication
 * 📂 Upload CSV & Excel datasets
-* 🧹 Automated Data Cleaning & Profiling
-* 📊 Interactive Business Dashboards
-* 📈 KPI & Performance Analytics
-* 🤖 AI-Powered Insight Assistant
+* 📄 Upload Business Documents (PDF, DOCX)
+* 🧠 AI-powered Document Analysis & Information Extraction
+* 🧹 Automated Data Cleaning & Data Profiling
+* 📊 Interactive Business Intelligence Dashboards
+* 📈 KPI Tracking & Performance Analytics
+* 🤖 AI Business Insight Assistant
 * 📉 Predictive Analytics & Forecasting
 * 📑 Executive Report Generation
 * 📥 Export Cleaned Data & Reports
@@ -25,28 +27,30 @@ Kosvio is an end-to-end Business Intelligence platform that enables users to upl
 
 # 🛠 Tech Stack
 
-| Category           | Technologies              |
-| ------------------ | ------------------------- |
-| Frontend           | Streamlit                 |
-| Backend            | Python                    |
-| Data Processing    | Pandas, NumPy             |
-| Data Visualization | Plotly                    |
-| Database           | SQLite                    |
-| Machine Learning   | Scikit-learn, Statsmodels |
-| Version Control    | Git & GitHub              |
-| Deployment         | Streamlit Community Cloud |
+| Category                 | Technologies                             |
+| ------------------------ | ---------------------------------------- |
+| Frontend                 | Streamlit                                |
+| Backend                  | Python                                   |
+| Data Processing          | Pandas, NumPy                            |
+| Data Visualization       | Plotly                                   |
+| Database                 | SQLite                                   |
+| Machine Learning         | Scikit-learn, Statsmodels                |
+| AI & Document Processing | Azure AI Services, Document Intelligence |
+| File Processing          | OpenPyXL, PDF Processing Libraries       |
+| Version Control          | Git & GitHub                             |
+| Deployment               | Microsoft Azure Web App                  |
 
 ---
 
 # 🌐 Live Application
 
-You can access the deployed application here:
+Access the deployed application here:
 
-**https://kosvio.streamlit.app/**
+**https://kosvio-ai-e9e6dncchahjb4ax.centralindia-01.azurewebsites.net/**
 
 ---
 
-## 📸 Screenshots
+# 📸 Screenshots
 
 ### Landing Page
 
@@ -56,11 +60,11 @@ You can access the deployed application here:
 
 ![Login](assets/screenshots/login.png)
 
-### Upload Dataset
+### Dataset Upload
 
 ![Upload](assets/screenshots/upload.png)
 
-### Dashboard
+### Dashboard Analytics
 
 ![Dashboard](assets/screenshots/dashboard.png)
 
@@ -68,17 +72,20 @@ You can access the deployed application here:
 
 ![AI Panel](assets/screenshots/ai-panel.png)
 
+### Document Analysis
+
+![Document Analysis](assets/screenshots/document-analysis.png)
+
 ### Reports
 
 ![Reports](assets/screenshots/reports.png)
-
 
 ---
 
 # 📂 Project Structure
 
 ```text
-Clario/
+Kosvio/
 │
 ├── analytics/
 ├── assets/
@@ -104,19 +111,19 @@ Clario/
 
 # ⚙ Installation
 
-Clone the repository
+Clone the repository:
 
 ```bash
-git clone https://github.com/Ishita1306/kosvio.git
+git clone https://github.com/Ishita1306/Kosvio.git
 ```
 
-Move into the project directory
+Move into the project directory:
 
 ```bash
-cd kosvio
+cd Kosvio
 ```
 
-Create a virtual environment
+Create a virtual environment:
 
 ### Windows
 
@@ -132,13 +139,13 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the application
+Run the application:
 
 ```bash
 streamlit run app.py
@@ -149,11 +156,30 @@ streamlit run app.py
 # 🚀 Usage
 
 1. Create an account or sign in.
-2. Upload a CSV or Excel dataset.
-3. Automatically clean and profile your data.
+2. Upload business datasets (CSV/Excel) or documents (PDF/DOCX).
+3. Automatically clean, profile, and analyze uploaded data.
 4. Explore interactive dashboards and KPIs.
 5. Generate AI-powered business insights.
-6. Export reports and cleaned datasets.
+6. Analyze important information from uploaded documents.
+7. Generate executive reports and export results.
+
+---
+
+# 📄 Supported File Types
+
+Kosvio supports:
+
+### Data Files
+
+* CSV
+* Excel (.xlsx)
+
+### Documents
+
+* PDF
+* DOCX
+
+Users can extract insights from documents, analyze reports, and combine business data with AI-generated recommendations.
 
 ---
 
@@ -164,8 +190,9 @@ streamlit run app.py
 * Advanced forecasting models
 * Role-based access control
 * Custom dashboard builder
-* AI report generation improvements
+* Improved AI report generation
 * PDF export enhancements
+* Real-time analytics
 * API integrations
 
 ---
@@ -180,4 +207,5 @@ B.Tech Computer Science Engineering (Data Science)
 
 # 📄 License
 
-This project is intended for educational and portfolio purposes.
+This project is licensed under the MIT License.
+
